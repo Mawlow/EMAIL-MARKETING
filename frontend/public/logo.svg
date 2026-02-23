@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 32" fill="none">
+  <defs>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#E53935"/>
+      <stop offset="50%" stop-color="#1E88E5"/>
+      <stop offset="100%" stop-color="#FDD835"/>
+    </linearGradient>
+  </defs>
+  <text x="0" y="22" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" letter-spacing="-0.03em" fill="#ffffff">FH CRM</text>
+  <rect x="0" y="26" width="72" height="2" rx="1" fill="url(#accent)"/>
+</svg>
