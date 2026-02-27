@@ -58,7 +58,11 @@ class ContactController extends Controller
         }
         $companyId = $request->user()->company_id;
         $data = $request->validate([
-            'email' => ['sometimes', 'email'],
+            'email' => [
+                'sometimes', 
+                'email', 
+                Rule::unique('contacts', 'email')->where('company_id', $companyId)->ignore($contact->id)
+            ],
             'first_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],

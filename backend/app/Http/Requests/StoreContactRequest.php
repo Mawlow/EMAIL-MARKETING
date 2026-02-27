@@ -16,7 +16,11 @@ class StoreContactRequest extends FormRequest
     {
         $companyId = $this->user()?->company_id;
         return [
-            'email' => ['required', 'email'],
+            'email' => [
+                'required', 
+                'email', 
+                Rule::unique('contacts', 'email')->where('company_id', $companyId)
+            ],
             'first_name' => ['nullable', 'string', 'max:255'],
             'last_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
