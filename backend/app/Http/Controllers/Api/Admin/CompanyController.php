@@ -71,6 +71,12 @@ class CompanyController extends Controller
         return response()->json($company);
     }
 
+    public function enable(Company $company): JsonResponse
+    {
+        $company->update(['is_active' => true]);
+        return response()->json($company);
+    }
+
     public function disable(Company $company): JsonResponse
     {
         $company->update(['is_active' => false]);

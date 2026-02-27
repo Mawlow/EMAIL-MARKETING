@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('companies', App\Http\Controllers\Api\Admin\CompanyController::class);
         Route::post('companies/{company}/approve', [App\Http\Controllers\Api\Admin\CompanyController::class, 'approve'])->name('companies.approve');
         Route::post('companies/{company}/verify', [App\Http\Controllers\Api\Admin\CompanyController::class, 'verify'])->name('companies.verify');
+        Route::post('companies/{company}/enable', [App\Http\Controllers\Api\Admin\CompanyController::class, 'enable'])->name('companies.enable');
         Route::post('companies/{company}/disable', [App\Http\Controllers\Api\Admin\CompanyController::class, 'disable'])->name('companies.disable');
         Route::get('campaigns', [App\Http\Controllers\Api\Admin\CampaignController::class, 'index'])->name('campaigns.index');
         Route::get('campaigns/{campaign}', [App\Http\Controllers\Api\Admin\CampaignController::class, 'show'])->name('campaigns.show');
