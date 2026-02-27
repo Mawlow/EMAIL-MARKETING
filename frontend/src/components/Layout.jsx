@@ -1,26 +1,15 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { Mail, Users, Send, BarChart3, Building2, Calendar, LogOut, FolderOpen, Menu, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
-const HERO_VIDEO = '/hero.mp4';
 const navClass = ({ isActive }) => (isActive ? 'sidebar-link active' : 'sidebar-link');
 
 export default function Layout() {
-  const videoRef = useRef(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const isAdmin = user?.role === 'admin';
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const play = () => video.play().catch(() => {});
-    play();
-    video.addEventListener('loadeddata', play);
-    return () => video.removeEventListener('loadeddata', play);
-  }, []);
 
   const handleLogout = () => {
     logout();
@@ -29,19 +18,6 @@ export default function Layout() {
 
   return (
     <div className="layout-wrap">
-      <div className="landing-video-wrap">
-        <video
-          ref={videoRef}
-          className="landing-video"
-          src={HERO_VIDEO}
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden
-        />
-        <div className="landing-video-overlay" aria-hidden />
-      </div>
       <div className="layout">
       <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
         <Menu size={24} />
@@ -50,7 +26,7 @@ export default function Layout() {
       <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-brand">
           <Link to="/" onClick={() => setSidebarOpen(false)}>
-            <img src="/logo.svg" alt="FH CRM" className="sidebar-logo" />
+            <img src="/logo1.png" alt="FH CRM" className="sidebar-logo" />
           </Link>
           <button type="button" className="sidebar-close" onClick={() => setSidebarOpen(false)} aria-label="Close menu">
             <X size={22} />

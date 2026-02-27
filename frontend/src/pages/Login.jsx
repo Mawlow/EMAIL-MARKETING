@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User } from 'lucide-react';
+import { LogIn, ArrowLeft } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import AuthLayout from '../components/AuthLayout';
 import './Auth.css';
@@ -20,61 +20,74 @@ export default function Login() {
       await login(email, password, rememberMe);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed.');
+      setError(err.response?.data?.message || 'Login failed. Please check your credentials.');
     }
   };
 
   return (
     <AuthLayout>
-      <div className="auth-card auth-card--gradient">
+      <div className="auth-logo-wrap">
+        <Link to="/">
+          <img src="/logo1.png" alt="FH CRM" className="auth-logo" />
+        </Link>
+      </div>
+      <div className="auth-card">
+        <Link to="/" className="auth-back-link">
+          <ArrowLeft size={18} /> Back to Home
+        </Link>
+        
         <div className="auth-card-header">
           <div className="auth-icon-wrap" aria-hidden>
-            <User size={32} strokeWidth={1.5} />
+            <LogIn size={24} />
           </div>
-          <h1 className="auth-title-with-lines">
-            <span className="auth-title-line auth-title-line--left" />
-            Sign In
-            <span className="auth-title-line auth-title-line--right" />
-          </h1>
+          <h1 className="auth-title">Welcome Back</h1>
+          <p className="auth-subtitle">Sign in to your account</p>
         </div>
+
+        {error && <div className="auth-error">{error}</div>}
+
         <form onSubmit={handleSubmit}>
-          {error && <div className="auth-error">{error}</div>}
           <label>
+            Email Address
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
+              placeholder="name@company.com"
               required
               autoComplete="email"
             />
           </label>
+          
           <label>
+            Password
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Password"
+              placeholder="••••••••"
               required
               autoComplete="current-password"
             />
           </label>
-          <button type="submit">Login</button>
+
+          <div className="auth-options">
+            <label className="auth-remember">
+              <input
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+              />
+              <span>  Remember me</span>
+            </label>
+            <Link to="/forgot-password" className="auth-forgot">Forgot password?</Link>
+          </div>
+
+          <button type="submit">Sign In</button>
         </form>
-        <div className="auth-options">
-          <label className="auth-remember">
-            <input
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <span>Remember me</span>
-          </label>
-          <Link to="/forgot-password" className="auth-forgot">Forgot password?</Link>
-        </div>
-        <div className="auth-divider auth-divider--light" aria-hidden />
-        <p className="auth-footer auth-footer--light">
-          Not a member? <Link to="/register">Create Account</Link>
+
+        <p className="auth-footer">
+          Don't have an account? <Link to="/register">Create Account</Link>
         </p>
       </div>
     </AuthLayout>
