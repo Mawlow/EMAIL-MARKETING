@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 
-const HERO_VIDEO = '/hero.mp4';
+const HERO_VIDEO = '/landing.mp4';
 
 export default function AuthLayout({ children }) {
   const videoRef = useRef(null);
@@ -8,6 +8,7 @@ export default function AuthLayout({ children }) {
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
+    video.playbackRate = 0.5;
     const play = () => video.play().catch(() => {});
     play();
     video.addEventListener('loadeddata', play);
