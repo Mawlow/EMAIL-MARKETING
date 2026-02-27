@@ -209,9 +209,9 @@ export default function CompanyCampaigns() {
               <td style={styles.tableCell}>
                 <button type="button" className="btn-icon" onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569' }}><Pencil size={16} /></button>
                 {c.status === 'draft' && <button type="button" className="btn-icon" onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
-                {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className="btn-icon" onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>}
+                <button type="button" className="btn-icon" onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>
                 <Link to={`/campaigns/${c.id}/logs`} className="btn-icon" title="Logs" style={{ color: '#475569' }}><FileText size={16} /></Link>
-                {c.status !== 'sending' && <button type="button" className="btn-icon" onClick={() => handleDelete(c)} title="Delete" style={{ color: '#dc2626' }}><Trash2 size={16} /></button>}
+                <button type="button" className="btn-icon" onClick={() => handleDelete(c)} title="Delete" style={{ color: '#dc2626' }}><Trash2 size={16} /></button>
               </td>
             </tr>
           ))}
