@@ -49,6 +49,7 @@ export const admin = {
     delete: (id) => api.delete(`/admin/companies/${id}`),
     approve: (id) => api.post(`/admin/companies/${id}/approve`),
     verify: (id) => api.post(`/admin/companies/${id}/verify`),
+    enable: (id) => api.post(`/admin/companies/${id}/enable`),
     disable: (id) => api.post(`/admin/companies/${id}/disable`),
   },
   campaigns: {
