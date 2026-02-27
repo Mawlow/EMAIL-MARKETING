@@ -1,10 +1,57 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { company } from '../../api/client';
+
+const styles = {
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '1.25rem'
+  },
+  title: {
+    margin: 0,
+    color: '#000',
+    fontWeight: 700
+  },
+  toolbar: {
+    display: 'flex',
+    gap: '0.75rem',
+    alignItems: 'center',
+    margin: 0
+  },
+  badge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.2rem 0.6rem',
+    borderRadius: '6px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    letterSpacing: '0.025em',
+  },
+  getStatusStyle: (status) => {
+    switch (status) {
+      case 'sent':
+      case 'completed':
+      case 'active':
+        return { background: '#0f172a', color: '#fff' };
+      case 'pending':
+      case 'draft':
+        return { background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' };
+      case 'failed':
+      case 'cancelled':
+        return { background: '#fee2e2', color: '#b91c1c' };
+      default:
+        return { background: '#e2e8f0', color: '#475569' };
+    }
+  }
+};
 
 export default function CampaignLogs() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [logs, setLogs] = useState({ data: [], meta: {} });
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -23,14 +70,23 @@ export default function CampaignLogs() {
 
   return (
     <div className="page">
-      <h1>Campaign email logs</h1>
-      <div className="toolbar">
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="">All</option>
-          <option value="pending">Pending</option>
-          <option value="sent">Sent</option>
-          <option value="failed">Failed</option>
-        </select>
+      <div style={styles.header}>
+        <h1 style={styles.title}>Campaign email logs</h1>
+        <div className="toolbar" style={styles.toolbar}>
+          <button type="button" className="btn btn-primary" onClick={() => navigate('/campaigns')}>
+            <Plus size={18} /> New campaign
+          </button>
+          <select 
+            value={status} 
+            onChange={(e) => setStatus(e.target.value)}
+            style={{ backgroundColor: '#0f172a', color: '#fff', borderColor: '#0f172a' }}
+          >
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="sent">Sent</option>
+            <option value="failed">Failed</option>
+          </select>
+        </div>
       </div>
       <table className="table">
         <thead>
@@ -46,7 +102,11 @@ export default function CampaignLogs() {
           {logs.data?.map((l) => (
             <tr key={l.id}>
               <td>{l.recipient_email}</td>
-              <td>{l.status}</td>
+              <td>
+                <span style={{ ...styles.badge, ...styles.getStatusStyle(l.status) }}>
+                  {l.status}
+                </span>
+              </td>
               <td>{l.opened_at ? new Date(l.opened_at).toLocaleString() : '—'}</td>
               <td>{l.error_message || '—'}</td>
               <td>{l.sent_at ? new Date(l.sent_at).toLocaleString() : '—'}</td>

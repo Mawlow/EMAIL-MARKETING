@@ -20,10 +20,11 @@ const PROFESSIONAL_TEMPLATE = `<h1>Welcome</h1>
 <p>To stop receiving these emails, <a href="{{unsubscribe_url}}">unsubscribe here</a>.</p>
 <p>— The Team</p>`;
 
-export default function CampaignForm({ asModal, onSuccess, onCancel } = {}) {
-  const { id } = useParams();
+export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = {}) {
+  const { id: paramsId } = useParams();
   const navigate = useNavigate();
-  const isEdit = Boolean(id);
+  const currentId = editId || paramsId;
+  const isEdit = Boolean(currentId);
   const [form, setForm] = useState({
     name: '',
     subject: '',
@@ -46,7 +47,7 @@ export default function CampaignForm({ asModal, onSuccess, onCancel } = {}) {
       if (!isEdit) setLoading(false);
     });
     if (isEdit) {
-      company.campaigns.get(id).then(({ data }) => {
+      company.campaigns.get(currentId).then(({ data }) => {
         setForm({
           name: data.name,
           subject: data.subject,
@@ -58,7 +59,7 @@ export default function CampaignForm({ asModal, onSuccess, onCancel } = {}) {
         setLoading(false);
       }).catch(() => setLoading(false));
     }
-  }, [id, isEdit]);
+  }, [currentId, isEdit]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -70,15 +71,26 @@ export default function CampaignForm({ asModal, onSuccess, onCancel } = {}) {
     };
     try {
       if (isEdit) {
-        await company.campaigns.update(id, payload);
+        await company.campaigns.update(currentId, payload);
         if (onSuccess) onSuccess();
         else navigate('/campaigns');
       } else {
         const { data: campaign } = await company.campaigns.create(payload);
-        await company.campaigns.send(campaign.id);
+        try {
+          await company.campaigns.send(campaign.id);
+        } catch (sendErr) {
+          console.error('Failed to send immediately:', sendErr);
+          alert('Campaign saved as draft, but failed to start sending: ' + (sendErr.response?.data?.message || 'Check your sender accounts.'));
+        }
         if (onSuccess) onSuccess();
         else navigate('/campaigns');
       }
+    } catch (err) {
+      console.error('Failed to save campaign:', err);
+      const msg = err.response?.data?.errors
+        ? Object.values(err.response.data.errors).flat().join(' ')
+        : err.response?.data?.message || 'Failed to save campaign. Please check all fields.';
+      alert(msg);
     } finally {
       setSaving(false);
     }

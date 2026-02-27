@@ -33,6 +33,6 @@ class Contact extends Model
 
     public function groups(): BelongsToMany
     {
-        return $this->belongsToMany(ContactGroup::class, 'contact_contact_group')->withTimestamps();
+        return $this->belongsToMany(ContactGroup::class, 'contact_contact_group');
     }
 }
