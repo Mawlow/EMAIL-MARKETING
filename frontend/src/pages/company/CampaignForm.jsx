@@ -23,7 +23,7 @@ const PROFESSIONAL_TEMPLATE = `<h1>Welcome</h1>
 export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = {}) {
   const { id: paramsId } = useParams();
   const navigate = useNavigate();
-  const currentId = (editId && editId !== 'new') ? editId : (paramsId && paramsId !== 'new' ? paramsId : null);
+  const currentId = editId || paramsId;
   const isEdit = Boolean(currentId);
   const [form, setForm] = useState({
     name: '',
@@ -75,16 +75,13 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
         if (onSuccess) onSuccess();
         else navigate('/campaigns');
       } else {
-        const { data: campaignData } = await company.campaigns.create(payload);
-        const campaign = campaignData.data || campaignData;
-        
-        if (campaign && campaign.id) {
-          // Fire and forget the send request, backend is now also background-optimized
-          company.campaigns.send(campaign.id).catch(err => {
-            console.error('Background send error:', err);
-          });
+        const { data: campaign } = await company.campaigns.create(payload);
+        try {
+          await company.campaigns.send(campaign.id);
+        } catch (sendErr) {
+          console.error('Failed to send immediately:', sendErr);
+          alert('Campaign saved as draft, but failed to start sending: ' + (sendErr.response?.data?.message || 'Check your sender accounts.'));
         }
-        
         if (onSuccess) onSuccess();
         else navigate('/campaigns');
       }

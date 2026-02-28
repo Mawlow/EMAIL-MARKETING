@@ -25,7 +25,23 @@ const EVENT_COLORS = [
   '#f97316', // Orange
 ];
 
-const getEventColor = (id) => EVENT_COLORS[id % EVENT_COLORS.length];
+const getEventColor = (id) => {
+  if (id === undefined || id === null) return EVENT_COLORS[0];
+  const numId = typeof id === 'number' ? id : parseInt(id.toString().replace(/\D/g, '')) || 0;
+  return EVENT_COLORS[numId % EVENT_COLORS.length];
+};
+
+const DateHeader = ({ date: headerDate }) => {
+  const isToday = isSameDay(headerDate, new Date());
+  return (
+    <div className="custom-column-header">
+      <div className="header-day-name">{format(headerDate, 'EEE')}</div>
+      <div className={`header-date-number ${isToday ? 'today' : ''}`}>
+        {format(headerDate, 'd')}
+      </div>
+    </div>
+  );
+};
 
 function getRangeForView(date, view) {
   let start, end;
@@ -198,6 +214,18 @@ export default function Calendar() {
   const handleCloseModal = () => {
     setShowModal(false);
     setEditing(null);
+  };
+
+  const DateHeader = ({ date: headerDate, label }) => {
+    const isToday = isSameDay(headerDate, new Date());
+    return (
+      <div className="custom-column-header">
+        <div className="header-day-name">{format(headerDate, 'EEE')}</div>
+        <div className={`header-date-number ${isToday ? 'today' : ''}`}>
+          {format(headerDate, 'd')}
+        </div>
+      </div>
+    );
   };
 
   const DateCellWrapper = ({ value, children }) => {
@@ -451,7 +479,7 @@ export default function Calendar() {
           color: #2b52a5 !important;
           background: #eff6ff !important;
           border-bottom: 1px solid #e2e8f0 !important;
-          padding: 12px 0 !important;
+          padding: 0 !important;
           font-weight: 700 !important;
           font-size: 0.875rem !important;
           text-transform: uppercase;
@@ -461,14 +489,60 @@ export default function Calendar() {
           border-left: 1px solid #e2e8f0 !important;
         }
 
-        /* WEEK / DAY VIEW SPECIFIC FIXES */
+        /* CUSTOM DAY/WEEK HEADER - Same as Month Date Labels */
+        .custom-column-header {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          padding: 8px 0;
+          gap: 4px;
+        }
+        .header-day-name {
+          font-size: 0.75rem;
+          font-weight: 700;
+          color: #64748b;
+          text-transform: uppercase;
+        }
+        .header-date-number {
+          font-size: 1.1rem;
+          font-weight: 800;
+          color: #0f172a;
+          width: 32px;
+          height: 32px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+        }
+        .header-date-number.today {
+          background: #2b52a5 !important;
+          color: #fff !important;
+        }
+
+        /* WEEK / DAY VIEW SPECIFIC FIXES - Same style as Month Bands */
         .calendar-wrap:not(.view-month) .rbc-event {
           border-radius: 4px !important;
-          padding: 4px 8px !important;
-          font-weight: 600 !important;
+          padding: 4px 10px !important;
+          font-weight: 800 !important;
           font-size: 0.85rem !important;
-          border: 1px solid rgba(0,0,0,0.05) !important;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+          border: none !important;
+          border-left: 4px solid currentColor !important;
+          overflow: visible !important; 
+          min-height: 28px !important;
+        }
+
+        .calendar-wrap:not(.view-month) .rbc-event-content {
+          overflow: visible !important;
+          white-space: normal !important;
+          word-break: break-word !important;
+          line-height: 1.2 !important;
+        }
+
+        .calendar-wrap:not(.view-month) .rbc-event-label {
+          font-size: 0.75rem !important;
+          font-weight: 700 !important;
+          opacity: 0.9 !important;
+          margin-bottom: 2px !important;
         }
 
         /* Today's indicator for Week/Day views */
@@ -587,14 +661,19 @@ export default function Calendar() {
           views={['month', 'week', 'day', 'agenda']}
           formats={{
             dateFormat: 'd',
+            dayFormat: 'EEE d', // Adds date to Week view headers (e.g. Mon 27)
+            dayHeaderFormat: 'EEEE MMMM d', // Adds date to Day view header
           }}
           components={{
-            dateCellWrapper: DateCellWrapper
+            dateCellWrapper: DateCellWrapper,
+            header: DateHeader
           }}
-          eventPropGetter={(event) => ({
+          eventPropGetter={(e) => ({
             style: {
-              backgroundColor: view === 'month' ? 'transparent' : getEventColor(event.id),
-              color: view === 'month' ? getEventColor(event.id) : '#fff',
+              backgroundColor: getEventColor(e.id) + '33', // Translucent background like Month
+              color: getEventColor(e.id),
+              borderLeft: `4px solid ${getEventColor(e.id)}`,
+              fontWeight: 700
             }
           })}
         />
