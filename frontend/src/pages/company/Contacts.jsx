@@ -49,14 +49,14 @@ const styles = {
     color: '#000000'
   },
   searchInput: {
-    borderColor: '#0f172a',
+    borderColor: '#2b52a5',
     background: '#ffffff',
     color: '#000000'
   },
   btnImport: {
-    background: '#0f172a',
+    background: '#2b52a5',
     color: '#fff',
-    border: '1px solid #0f172a'
+    border: '1px solid #2b52a5'
   },
   modalRow: {
     display: 'flex',
@@ -95,7 +95,7 @@ const styles = {
     borderTop: '1px solid #e2e8f0'
   },
   btnConfirm: {
-    background: '#dc2626',
+    background: '#2b52a5',
     color: '#fff',
     border: 'none',
     padding: '0.5rem 1rem',
@@ -244,9 +244,9 @@ export default function Contacts() {
           color: #0f172a !important;
         }
         .action-btn-delete:hover {
-          background-color: #fef2f2 !important;
-          border-color: #ef4444 !important;
-          color: #dc2626 !important;
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
         }
       `}</style>
       <div style={styles.header}>
@@ -422,7 +422,7 @@ export default function Contacts() {
                 </td>
                 <td style={styles.tableCell}>
                   <button type="button" className="btn-icon action-btn-edit" onClick={() => openEdit(c)} title="Edit" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={16} /></button>
-                  <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #dc2626', background: '#fff', cursor: 'pointer', color: '#dc2626' }}><Trash2 size={16} /></button>
+                  <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Trash2 size={16} /></button>
                 </td>
               </tr>
             ))

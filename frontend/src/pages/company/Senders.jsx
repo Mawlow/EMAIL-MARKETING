@@ -92,7 +92,7 @@ const styles = {
     borderTop: '1px solid #e2e8f0'
   },
   btnConfirm: {
-    background: '#dc2626',
+    background: '#2b52a5',
     color: '#fff',
     border: 'none',
     padding: '0.5rem 1rem',
@@ -256,9 +256,9 @@ export default function Senders() {
           color: #0f172a !important;
         }
         .action-btn-delete:hover {
-          background-color: #fef2f2 !important;
-          border-color: #ef4444 !important;
-          color: #dc2626 !important;
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
         }
         .modal-body .form input,
         .modal-body .form select {
@@ -270,7 +270,7 @@ export default function Senders() {
       <div style={styles.header}>
         <h1 style={styles.title}>Senders</h1>
         <div className="toolbar" style={styles.toolbar}>
-          <button type="button" className="btn btn-primary" onClick={openNew} style={{ background: '#0f172a', border: '1px solid #0f172a', color: '#fff', fontWeight: 600, padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+          <button type="button" className="btn btn-primary" onClick={openNew} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff', fontWeight: 600, padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
             + Add sender
           </button>
         </div>
@@ -300,7 +300,7 @@ export default function Senders() {
                 <option value="inactive">Inactive</option>
               </select></label>
               <div className="form-actions modal-actions">
-                <button type="submit" style={{ background: 'transparent', border: '1px solid #0f172a', color: '#0f172a' }}>Save</button>
+                <button type="submit" style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff' }}>Save</button>
                 <button type="button" onClick={closeModal} style={{ color: '#000' }}>Cancel</button>
               </div>
             </form>
@@ -350,7 +350,7 @@ export default function Senders() {
               </td>
               <td style={styles.tableCell}>
                 <button type="button" className="btn-icon action-btn-edit" onClick={() => handleEdit(s)} title="Edit" style={{ ...styles.actionBtn, color: '#475569' }}><Pencil size={16} /></button>
-                <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#dc2626', borderColor: '#fecaca' }}><Trash2 size={16} /></button>
+                <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#475569' }}><Trash2 size={16} /></button>
               </td>
             </tr>
           ))}
