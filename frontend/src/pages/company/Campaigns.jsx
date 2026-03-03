@@ -62,7 +62,7 @@ const styles = {
       case 'sent':
       case 'completed':
       case 'active':
-        return { background: '#0f172a', color: '#fff' };
+        return { background: '#2b52a5', color: '#fff' };
       case 'pending':
       case 'draft':
         return { background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' };
@@ -101,7 +101,7 @@ const styles = {
     borderTop: '1px solid #e2e8f0'
   },
   btnConfirm: {
-    background: '#dc2626',
+    background: '#2b52a5',
     color: '#fff',
     border: 'none',
     padding: '0.5rem 1rem',
@@ -176,7 +176,7 @@ export default function CompanyCampaigns() {
           <select 
             value={status} 
             onChange={(e) => setStatus(e.target.value)}
-            style={{ backgroundColor: '#0f172a', color: '#fff', borderColor: '#0f172a' }}
+            style={{ backgroundColor: '#2b52a5', color: '#fff', borderColor: '#2b52a5' }}
           >
             <option value="">All statuses</option>
             <option value="draft">Draft</option>
@@ -211,7 +211,7 @@ export default function CompanyCampaigns() {
                 {c.status === 'draft' && <button type="button" className="btn-icon" onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
                 {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className="btn-icon" onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>}
                 <Link to={`/campaigns/${c.id}/logs`} className="btn-icon" title="Logs" style={{ color: '#475569' }}><FileText size={16} /></Link>
-                {c.status !== 'sending' && <button type="button" className="btn-icon" onClick={() => handleDelete(c)} title="Delete" style={{ color: '#dc2626' }}><Trash2 size={16} /></button>}
+                {c.status !== 'sending' && <button type="button" className="btn-icon" onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
               </td>
             </tr>
           ))}

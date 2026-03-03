@@ -133,7 +133,7 @@ export default function AdminCompanies() {
             letter-spacing: 0.05em;
             display: inline-block;
         }
-        .status-yes { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .status-yes { background: #eff6ff; color: #2b52a5; border: 1px solid #dbeafe; }
         .status-no { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
 
         .action-btns {
@@ -156,11 +156,11 @@ export default function AdminCompanies() {
             transition: all 0.2s;
         }
         .btn-approve { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-        .btn-approve:hover { background: #bbf7d0; }
+        .btn-approve:hover { background: #9ab3f7; color: #fff; border-color: #9ab3f7; }
         .btn-verify { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
-        .btn-verify:hover { background: #bfdbfe; }
-        .btn-disable { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
-        .btn-disable:hover { background: #fecaca; }
+        .btn-verify:hover { background: #9ab3f7; color: #fff; border-color: #9ab3f7; }
+        .btn-disable { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+        .btn-disable:hover { background: #9ab3f7; color: #fff; border-color: #9ab3f7; }
 
         .pagination-container {
             display: flex;

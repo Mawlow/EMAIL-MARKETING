@@ -553,7 +553,7 @@ export default function Calendar() {
         }
 
         .btn-new-event {
-          background-color: #e4002b !important;
+          background-color: #2b52a5 !important;
           color: white !important;
           border: none !important;
           padding: 0.8rem 1.75rem !important;
@@ -565,12 +565,12 @@ export default function Calendar() {
           gap: 0.6rem;
           cursor: pointer;
           transition: all 0.2s;
-          box-shadow: 0 4px 12px rgba(228, 0, 43, 0.2) !important;
+          box-shadow: 0 4px 12px rgba(43, 82, 165, 0.2) !important;
         }
         .btn-new-event:hover {
-          background-color: #c00024 !important;
+          background-color: #9ab3f7 !important;
           transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(228, 0, 43, 0.3) !important;
+          box-shadow: 0 6px 16px rgba(43, 82, 165, 0.3) !important;
         }
         .btn-new-event svg {
           width: 22px !important;

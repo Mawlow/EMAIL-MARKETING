@@ -36,7 +36,7 @@ const styles = {
       case 'sent':
       case 'completed':
       case 'active':
-        return { background: '#0f172a', color: '#fff' };
+        return { background: '#2b52a5', color: '#fff' };
       case 'pending':
       case 'draft':
         return { background: '#f1f5f9', color: '#64748b', border: '1px solid #e2e8f0' };
@@ -79,7 +79,7 @@ export default function CampaignLogs() {
           <select 
             value={status} 
             onChange={(e) => setStatus(e.target.value)}
-            style={{ backgroundColor: '#0f172a', color: '#fff', borderColor: '#0f172a' }}
+            style={{ backgroundColor: '#2b52a5', color: '#fff', borderColor: '#2b52a5' }}
           >
             <option value="">All statuses</option>
             <option value="pending">Pending</option>

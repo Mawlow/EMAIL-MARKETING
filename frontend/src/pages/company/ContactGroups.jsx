@@ -104,7 +104,7 @@ export default function ContactGroups() {
         }
 
         .btn-add-group {
-          background-color: #e4002b !important;
+          background-color: #2b52a5 !important;
           color: white !important;
           border: none !important;
           padding: 0.75rem 1.5rem !important;
@@ -116,13 +116,13 @@ export default function ContactGroups() {
           gap: 0.5rem;
           cursor: pointer;
           transition: all 0.2s;
-          box-shadow: 0 4px 12px rgba(228, 0, 43, 0.2) !important;
+          box-shadow: 0 4px 12px rgba(43, 82, 165, 0.2) !important;
         }
 
         .btn-add-group:hover {
-          background-color: #c00024 !important;
+          background-color: #9ab3f7 !important;
           transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(228, 0, 43, 0.3) !important;
+          box-shadow: 0 6px 16px rgba(43, 82, 165, 0.3) !important;
         }
 
         .description-row {
@@ -212,15 +212,15 @@ export default function ContactGroups() {
         }
 
         .btn-icon-custom.delete {
-          background: #fff1f2;
-          border-color: #ffe4e6;
-          color: #e4002b !important;
+          background: #f1f5f9;
+          border-color: #e2e8f0;
+          color: #475569 !important;
         }
 
         .btn-icon-custom.delete:hover {
-          background: #e4002b;
+          background: #9ab3f7;
           color: #fff !important;
-          border-color: #e4002b;
+          border-color: #9ab3f7;
           transform: scale(1.05);
         }
 
