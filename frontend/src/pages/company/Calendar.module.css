@@ -1,0 +1,340 @@
+.page {
+  background: #fff !important;
+  color: #0f172a !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  padding: 1.5rem !important;
+  border-radius: 12px;
+}
+
+.calendarCustomHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.calendarTitle {
+  margin: 0 !important;
+  font-size: 2.25rem !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  letter-spacing: -0.025em !important;
+}
+
+.calendarSubnav {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 0.5rem;
+}
+
+.subnavBtn {
+  background: transparent;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #64748b;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.subnavBtn:hover {
+  color: #0f172a;
+  background: #f1f5f9;
+}
+
+.subnavBtnActive {
+  color: #2b52a5;
+  background: #eff6ff;
+  font-weight: 600;
+}
+
+.calendarNavRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.calendarCurrentLabel {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: capitalize;
+}
+
+.calendarNavControls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.navArrowBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #0f172a;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.navArrowBtn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.navTodayBtn {
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.navTodayBtn:hover {
+  background: #f1f5f9;
+}
+
+.calendarWrap :global(.rbc-calendar) {
+  background: #fff !important;
+  color: #0f172a !important;
+  padding: 0 !important;
+}
+
+.calendarWrap :global(.rbc-month-view) {
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  background: #fff !important;
+}
+
+.calendarWrapViewMonth :global(.rbc-row-content) {
+  pointer-events: none !important;
+}
+
+.calendarWrapViewMonth :global(.rbc-row-content) :global(.rbc-row:first-child) {
+  visibility: hidden !important;
+}
+
+.calendarWrapViewMonth :global(.rbc-event),
+.calendarWrapViewMonth :global(.rbc-show-more) {
+  display: none !important;
+}
+
+.customMonthCell {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #fff;
+  cursor: pointer;
+  pointer-events: auto !important;
+  border-left: 1px solid #e2e8f0;
+}
+
+.customMonthCell:first-child { border-left: none; }
+.customMonthCellOffRange { background: #fcfcfc !important; }
+
+.customDateNumberLabel {
+  padding: 4px 8px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #0f172a;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+  height: 32px;
+  display: flex;
+  align-items: center;
+}
+
+.customMonthCellOffRange .customDateNumberLabel {
+  color: #94a3b8;
+  opacity: 0.4;
+}
+
+.todayCircleIndicator {
+  display: inline-flex;
+  width: 24px;
+  height: 24px;
+  background: #2b52a5;
+  color: #fff;
+  border-radius: 50%;
+  align-items: center;
+  justify-content: center;
+}
+
+.customEventBandsStack {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding-top: 32px;
+}
+
+.customHorizontalBand {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0 8px;
+  transition: filter 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customHorizontalBand:hover {
+  filter: brightness(0.95);
+}
+
+.calendarWrap :global(.rbc-header) {
+  color: #2b52a5 !important;
+  background: #eff6ff !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 0 !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+  text-transform: uppercase;
+}
+
+.calendarWrap :global(.rbc-header) + :global(.rbc-header) {
+  border-left: 1px solid #e2e8f0 !important;
+}
+
+.customColumnHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0;
+  gap: 4px;
+}
+
+.headerDayName {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.headerDateNumber {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #0f172a;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.headerDateNumberToday {
+  background: #2b52a5 !important;
+  color: #fff !important;
+}
+
+.calendarWrapNotMonth :global(.rbc-event) {
+  border-radius: 4px !important;
+  padding: 4px 10px !important;
+  font-weight: 800 !important;
+  font-size: 0.85rem !important;
+  border: none !important;
+  border-left: 4px solid currentColor !important;
+  overflow: visible !important; 
+  min-height: 28px !important;
+}
+
+.calendarWrapNotMonth :global(.rbc-event-content) {
+  overflow: visible !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.2 !important;
+}
+
+.calendarWrapNotMonth :global(.rbc-event-label) {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  opacity: 0.9 !important;
+  margin-bottom: 2px !important;
+}
+
+.calendarWrap :global(.rbc-time-view) :global(.rbc-now) :global(.rbc-button-link) {
+  background: #2b52a5 !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+}
+
+.btnNewEvent {
+  background-color: #2b52a5 !important;
+  color: white !important;
+  border: none !important;
+  padding: 0.8rem 1.75rem !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(43, 82, 165, 0.2) !important;
+}
+
+.btnNewEvent:hover {
+  background-color: #9ab3f7 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(43, 82, 165, 0.3) !important;
+}
+
+.btnNewEvent svg {
+  width: 22px !important;
+  height: 22px !important;
+}
+
+.modalDialog {
+  background: #fff !important;
+  border-radius: 12px !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modalHeader {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.modalActions {
+  padding: 1.25rem 1.5rem !important;
+  border-top: 1px solid #e2e8f0 !important;
+  background: #f8fafc !important;
+}
+
+.modalActions button[type="submit"] {
+  background-color: #2b52a5 !important;
+  color: #fff !important;
+  border: none !important;
+  padding: 0.65rem 1.5rem !important;
+  font-weight: 600 !important;
+  border-radius: 8px !important;
+}

@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { Save, ArrowRight } from 'lucide-react';
 import { company } from '../../api/client';
 import RichTextEditor from '../../components/RichTextEditor';
+import styles from './CampaignForm.module.css';
 
 const RECIPIENT_OPTIONS = [
   { value: 'marketing_contacts', label: 'All marketing contacts' },
@@ -120,10 +121,10 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
     }
   };
 
-  if (loading) return asModal ? <div className="modal-body-loading">Loading...</div> : <div className="page-loading">Loading...</div>;
+  if (loading) return asModal ? <div className={`modal-body-loading ${styles.pageLoading}`}>Loading...</div> : <div className={`page-loading ${styles.pageLoading}`}>Loading...</div>;
 
   const formContent = (
-    <form onSubmit={handleSubmit} className="form">
+    <form onSubmit={handleSubmit} className={`form ${styles.form}`}>
         <label>
           Name
           <input
@@ -166,7 +167,7 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
                 <option key={g.id} value={g.id}>{g.name}</option>
               ))}
             </select>
-            <span className="form-hint">Campaign will be sent to contacts in this group.</span>
+            <span className={`form-hint ${styles.formHint}`}>Campaign will be sent to contacts in this group.</span>
           </label>
         )}
         <label>
@@ -181,27 +182,27 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
             ))}
           </select>
         </label>
-        <div className="form-section">
-          <div className="form-section-head">
-            <span className="form-section-label">Email body</span>
+        <div className={`form-section ${styles.formSection}`}>
+          <div className={`form-section-head ${styles.formSectionHead}`}>
+            <span className={`form-section-label ${styles.formSectionLabel}`}>Email body</span>
             <button
               type="button"
-              className="btn btn-ghost btn-load-template"
+              className={`btn btn-ghost btn-load-template ${styles.btn} ${styles.btnGhost}`}
               onClick={() => setForm((f) => ({ ...f, body: PROFESSIONAL_TEMPLATE }))}
             >
               Load professional template
             </button>
           </div>
-          <div className="body-editor-tabs">
-            <button type="button" className={bodyMode === 'visual' ? 'body-editor-tab active' : 'body-editor-tab'} onClick={() => setBodyMode('visual')}>Visual (WYSIWYG)</button>
-            <button type="button" className={bodyMode === 'html' ? 'body-editor-tab active' : 'body-editor-tab'} onClick={() => setBodyMode('html')}>HTML</button>
+          <div className={`body-editor-tabs ${styles.bodyEditorTabs}`}>
+            <button type="button" className={bodyMode === 'visual' ? `body-editor-tab ${styles.bodyEditorTab} ${styles.active}` : `body-editor-tab ${styles.bodyEditorTab}`} onClick={() => setBodyMode('visual')}>Visual (WYSIWYG)</button>
+            <button type="button" className={bodyMode === 'html' ? `body-editor-tab ${styles.bodyEditorTab} ${styles.active}` : `body-editor-tab ${styles.bodyEditorTab}`} onClick={() => setBodyMode('html')}>HTML</button>
           </div>
-          <div className="form-section-body">
+          <div className={`form-section-body ${styles.formSectionBody}`}>
             {bodyMode === 'visual' ? (
               <RichTextEditor value={form.body} onChange={(body) => setForm((f) => ({ ...f, body }))} minHeight={320} />
             ) : (
               <textarea
-                className="campaign-body-input"
+                className={`campaign-body-input ${styles.campaignBodyInput}`}
                 value={form.body}
                 onChange={(e) => setForm((f) => ({ ...f, body: e.target.value }))}
                 placeholder="HTML content. Use {{unsubscribe_url}} and {{email}}."
@@ -210,16 +211,19 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
             )}
           </div>
         </div>
-        <div className={asModal ? 'form-actions modal-actions' : 'form-actions'}>
-          <button type="submit" disabled={saving}><ArrowRight size={16} /> {saving ? 'Sending...' : 'Send'}</button>
-          <button type="button" onClick={() => { if (onCancel) onCancel(); else navigate('/campaigns'); }}>Cancel</button>
+        <div className={asModal ? `form-actions modal-actions ${styles.formActions} ${styles.modalActions}` : `form-actions ${styles.formActions}`}>
+          <button type="submit" className={`${styles.btn} ${styles.btnSubmit}`} disabled={saving}>
+            {isEdit ? <Save size={16} /> : <ArrowRight size={16} />} 
+            {saving ? (isEdit ? 'Saving...' : 'Sending...') : (isEdit ? 'Save' : 'Send')}
+          </button>
+          <button type="button" className={`${styles.btn} ${styles.btnCancel}`} onClick={() => { if (onCancel) onCancel(); else navigate('/campaigns'); }}>Cancel</button>
         </div>
       </form>
   );
 
-  if (asModal) return <div className="modal-body">{formContent}</div>;
+  if (asModal) return <div className={`modal-body ${styles.modalBody}`}>{formContent}</div>;
   return (
-    <div className="page">
+    <div className={`page ${styles.page}`}>
       <h1>{isEdit ? 'Edit campaign' : 'New campaign'}</h1>
       {formContent}
     </div>

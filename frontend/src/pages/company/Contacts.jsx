@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { UserPlus, Upload, Search, X, Pencil, Trash2, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { company } from '../../api/client';
+import stylesModule from './Contacts.module.css';
 
 const emptyForm = {
   email: '',
@@ -265,53 +266,33 @@ export default function Contacts() {
     e.target.value = '';
   };
 
-  if (loading && !contacts.data) return <div className="page-loading">Loading...</div>;
+  if (loading && !contacts.data) return <div className={`page-loading ${stylesModule.pageLoading}`}>Loading...</div>;
 
   // Debug: Log the contacts data
   console.log('Contacts data:', contacts.data);
   console.log('Loading:', loading);
 
   return (
-    <div className="page" style={styles.page}>
-      <style>{`
-        .action-btn-edit:hover {
-          background-color: #f1f5f9 !important;
-          border-color: #94a3b8 !important;
-          color: #0f172a !important;
-        }
-        .action-btn-delete:hover {
-          background-color: #f1f5f9 !important;
-          border-color: #94a3b8 !important;
-          color: #0f172a !important;
-        }
-      `}</style>
+    <div className={`page ${stylesModule.page}`} style={styles.page}>
       <div style={styles.header}>
         <h1 style={styles.title}>Contacts</h1>
-        <div className="toolbar" style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
-          <div className="search-wrap" style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
-            <Search size={18} style={{ position: 'absolute', left: '0.75rem', color: '#0f172a', pointerEvents: 'none' }} />
+        <div className={`toolbar ${stylesModule.toolbar}`} style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
+          <div className={stylesModule.searchWrap}>
+            <Search size={18} />
             <input 
               type="search" 
               placeholder="Search..." 
               value={search} 
               onChange={(e) => setSearch(e.target.value)} 
-              style={{ 
-                ...styles.searchInput, 
-                paddingLeft: '2.5rem', 
-                paddingRight: '1rem',
-                border: '1px solid #0f172a',
-                borderRadius: '8px',
-                height: '38px',
-                width: '100%',
-                boxSizing: 'border-box'
-              }}
+              className={stylesModule.searchInput}
+              style={styles.searchInput}
             />
           </div>
-          <button type="button" className="btn btn-primary" onClick={openAdd}><UserPlus size={18} /> Add contact</button>
+          <button type="button" className={`btn btn-primary ${stylesModule.btn} ${stylesModule.btnPrimary}`} onClick={openAdd}><UserPlus size={18} /> Add contact</button>
           <input type="file" ref={fileRef} accept=".csv" style={{ display: 'none' }} onChange={handleImport} />
           <button 
             type="button" 
-            className="btn" 
+            className={`btn ${stylesModule.btn} ${stylesModule.btnImport}`} 
             onClick={() => fileRef.current?.click()}
             style={styles.btnImport}
           >
@@ -337,7 +318,7 @@ export default function Contacts() {
               <h3 style={{ margin: 0, color: '#000' }}>{editing ? 'Edit contact' : 'Add contact'}</h3>
               <button type="button" className="modal-close" onClick={closeModal} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
             </div>
-            <form onSubmit={handleSubmit} className="form modal-body">
+            <form onSubmit={handleSubmit} className={`form modal-body ${stylesModule.modalBody}`}>
               {error && <div className="auth-error">{error}</div>}
               <label>
                 Email <span style={{ color: '#dc2626' }}>*</span>
@@ -374,8 +355,8 @@ export default function Contacts() {
                   placeholder="+1 234 567 8900"
                 />
               </label>
-              <div style={styles.modalRow}>
-                <label style={styles.fieldHalf}>
+              <div className={stylesModule.modalRow}>
+                <label className={stylesModule.fieldHalf}>
                   Group
                   <select
                     value={form.contact_group_ids[0] ?? ''}
@@ -390,7 +371,7 @@ export default function Contacts() {
                     ))}
                   </select>
                 </label>
-                <label style={styles.fieldHalf}>
+                <label className={stylesModule.fieldHalf}>
                   Marketing
                   <select
                     value={form.is_marketing ? 'yes' : 'no'}
@@ -401,9 +382,9 @@ export default function Contacts() {
                   </select>
                 </label>
               </div>
-              <div className="form-actions modal-actions">
-                <button type="submit" disabled={saving}>{saving ? (editing ? 'Saving...' : 'Adding...') : (editing ? 'Save' : 'Add contact')}</button>
-                <button type="button" onClick={closeModal}>Cancel</button>
+              <div className={`form-actions modal-actions ${stylesModule.modalActions}`}>
+                <button type="submit" className={`${stylesModule.btn} ${stylesModule.btnPrimary}`} disabled={saving}>{saving ? (editing ? 'Saving...' : 'Adding...') : (editing ? 'Save' : 'Add contact')}</button>
+                <button type="button" className={stylesModule.btn} onClick={closeModal}>Cancel</button>
               </div>
             </form>
           </div>
@@ -417,19 +398,19 @@ export default function Contacts() {
               <h3 style={{ margin: 0, color: '#000' }}>Confirm Deletion</h3>
               <button type="button" className="modal-close" onClick={() => setDeleteConfirm(null)} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
             </div>
-            <div className="modal-body" style={styles.modalBody}>
+            <div className={`modal-body ${stylesModule.modalBody}`} style={styles.modalBody}>
               <p style={{ margin: 0, color: '#000' }}>Are you sure you want to delete the contact <strong>"{deleteConfirm.email}"</strong>?</p>
               <p style={{ marginTop: '0.5rem', color: '#dc2626', fontSize: '0.875rem' }}>This action cannot be undone.</p>
-              <div style={styles.modalActions}>
-                <button type="button" className="btn" onClick={() => setDeleteConfirm(null)} style={{ color: '#000' }}>Cancel</button>
-                <button type="button" style={styles.btnConfirm} onClick={executeDelete}>Yes, Delete Contact</button>
+              <div className={`modal-actions ${stylesModule.modalActions}`} style={styles.modalActions}>
+                <button type="button" className={`btn ${stylesModule.btn}`} onClick={() => setDeleteConfirm(null)} style={{ color: '#000' }}>Cancel</button>
+                <button type="button" className={stylesModule.btn} style={styles.btnConfirm} onClick={executeDelete}>Yes, Delete Contact</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <table className="table" style={styles.table}>
+      <table className={`table ${stylesModule.table}`} style={styles.table}>
         <thead>
           <tr>
             <th style={styles.tableHeader}>Email</th>
@@ -452,23 +433,14 @@ export default function Contacts() {
                 <td style={styles.tableCell}>{(c.groups || []).map((g) => g.name).join(', ') || '—'}</td>
                 <td style={styles.tableCell}>
                   <span 
-                    style={{
-                      display: 'inline-flex',
-                      padding: '0.25rem 0.75rem',
-                      borderRadius: '6px',
-                      border: `1px solid ${c.is_marketing ? '#10b981' : '#e2e8f0'}`,
-                      background: c.is_marketing ? '#10b981' : '#fff',
-                      color: c.is_marketing ? '#fff' : '#64748b',
-                      fontSize: '0.875rem',
-                      fontWeight: '500'
-                    }}
+                    className={`${stylesModule.marketingBadge} ${c.is_marketing ? stylesModule.marketingYes : stylesModule.marketingNo}`}
                   >
                     {c.is_marketing ? 'Yes' : 'No'}
                   </span>
                 </td>
                 <td style={styles.tableCell}>
-                  <button type="button" className="btn-icon action-btn-edit" onClick={() => openEdit(c)} title="Edit" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={16} /></button>
-                  <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Trash2 size={16} /></button>
+                  <button type="button" className={`btn-icon ${stylesModule.btnIcon} ${stylesModule.actionBtnEdit}`} onClick={() => openEdit(c)} title="Edit" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={16} /></button>
+                  <button type="button" className={`btn-icon ${stylesModule.btnIcon} ${stylesModule.actionBtnDelete}`} onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Trash2 size={16} /></button>
                 </td>
               </tr>
             ))
@@ -482,7 +454,7 @@ export default function Contacts() {
         </tbody>
       </table>
       {contacts.meta?.last_page > 1 && (
-        <div className="pagination">
+        <div className={`pagination ${stylesModule.pagination}`}>
           <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
           <span>Page {page} of {contacts.meta.last_page}</span>
           <button type="button" disabled={page >= contacts.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>

@@ -34,7 +34,7 @@ class SendCampaignEmailJob implements ShouldQueue
             ->where('recipient_email', $this->recipientEmail)
             ->first();
 
-        if (! $log || $log->status === CampaignEmailLog::STATUS_SENT) {
+        if (! $log || in_array($log->status, [CampaignEmailLog::STATUS_SENT, CampaignEmailLog::STATUS_OPENED])) {
             return;
         }
 
