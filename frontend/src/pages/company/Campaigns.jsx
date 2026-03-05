@@ -190,8 +190,10 @@ export default function CompanyCampaigns() {
           <tr>
             <th style={styles.tableHeader}>Name</th>
             <th style={styles.tableHeader}>Subject</th>
+            <th style={styles.tableHeader}>Recipients</th>
             <th style={styles.tableHeader}>Status</th>
-            <th style={styles.tableHeader}>Sent / Total</th>
+            <th style={styles.tableHeader}>Sent / Failed</th>
+            <th style={styles.tableHeader}>Date</th>
             <th style={styles.tableHeader}>Actions</th>
           </tr>
         </thead>
@@ -200,12 +202,14 @@ export default function CompanyCampaigns() {
             <tr key={c.id}>
               <td style={styles.tableCell}><Link to={`/campaigns/${c.id}`} style={styles.link}>{c.name}</Link></td>
               <td style={styles.tableCell}>{c.subject}</td>
+              <td style={styles.tableCell}>{c.total_recipients}</td>
               <td style={styles.tableCell}>
                 <span style={{ ...styles.badge, ...styles.getStatusStyle(c.status) }}>
                   {c.status}
                 </span>
               </td>
-              <td style={styles.tableCell}>{c.sent_count} / {c.total_recipients}</td>
+              <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>
+              <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>
               <td style={styles.tableCell}>
                 <button type="button" className="btn-icon" onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569' }}><Pencil size={16} /></button>
                 {c.status === 'draft' && <button type="button" className="btn-icon" onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
