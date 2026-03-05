@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X, Users, Info } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Pencil, Trash2, X, Users, Info, ExternalLink } from 'lucide-react';
 import { company } from '../../api/client';
 
 export default function ContactGroups() {
+  const navigate = useNavigate();
   const [groups, setGroups] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -86,6 +88,7 @@ export default function ContactGroups() {
           backdrop-filter: none !important;
           -webkit-backdrop-filter: none !important;
           padding: 1.5rem !important;
+          min-height: calc(100vh - 100px);
         }
 
         .groups-header {
@@ -93,6 +96,8 @@ export default function ContactGroups() {
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1.5rem;
+          flex-wrap: wrap;
+          gap: 1rem;
         }
 
         .groups-title {
@@ -113,10 +118,12 @@ export default function ContactGroups() {
           border-radius: 10px !important;
           display: flex;
           align-items: center;
+          justify-content: center;
           gap: 0.5rem;
           cursor: pointer;
           transition: all 0.2s;
           box-shadow: 0 4px 12px rgba(43, 82, 165, 0.2) !important;
+          white-space: nowrap;
         }
 
         .btn-add-group:hover {
@@ -131,6 +138,7 @@ export default function ContactGroups() {
           align-items: center;
           gap: 2rem;
           margin-bottom: 2rem;
+          flex-wrap: wrap;
         }
 
         .groups-description {
@@ -140,15 +148,24 @@ export default function ContactGroups() {
           line-height: 1.6;
           margin: 0 !important;
           max-width: 800px;
+          flex: 1;
+          min-width: 300px;
+        }
+
+        .table-container {
+          width: 100%;
+          overflow-x: auto;
+          border-radius: 12px;
+          border: 2px solid #e2e8f0;
+          margin-bottom: 1rem;
         }
 
         .table-custom {
           width: 100%;
           border-collapse: separate;
           border-spacing: 0;
-          border: 2px solid #e2e8f0;
-          border-radius: 12px;
           overflow: hidden;
+          min-width: 600px;
         }
 
         .table-custom th {
@@ -188,12 +205,12 @@ export default function ContactGroups() {
 
         .action-btns {
           display: flex;
-          gap: 0.75rem;
+          gap: 0.5rem;
         }
 
         .btn-icon-custom {
-          width: 42px;
-          height: 42px;
+          width: 38px;
+          height: 38px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -228,12 +245,121 @@ export default function ContactGroups() {
         .modal-dialog-custom {
           background: #fff !important;
           border-radius: 16px !important;
-          width: 100%;
+          width: 95%;
           max-width: 450px !important;
           overflow: hidden;
           box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+          margin: 1rem;
         }
 
+        /* Responsive adjustments */
+                @media (max-width: 768px) {
+                  .page-groups-override {
+                    padding: 1rem !important;
+                  }
+                  .groups-title {
+                    font-size: 1.75rem !important;
+                  }
+                  .description-row {
+                    flex-direction: column;
+                    align-items: stretch;
+                    gap: 1.25rem;
+                  }
+                  .groups-description {
+                    min-width: unset;
+                  }
+                  .btn-add-group {
+                    width: 100%;
+                  }
+        
+                  /* Table to Cards for Mobile */
+                  .table-container {
+                    border: none;
+                    overflow: visible;
+                  }
+                  .table-custom {
+                    min-width: unset;
+                    display: block;
+                  }
+                  .table-custom thead {
+                    display: none; /* Hide headers on mobile */
+                  }
+                  .table-custom tbody, 
+                  .table-custom tr {
+                    display: block;
+                    width: 100%;
+                  }
+                  .table-custom tr {
+                    background: #fff;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 12px;
+                    margin-bottom: 1rem;
+                    padding: 1rem;
+                    transition: transform 0.2s;
+                    display: flex !important;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 0.5rem;
+                  }
+                  .table-custom tr:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+                  }
+                  .table-custom td {
+                    display: block;
+                    padding: 0 !important;
+                    border-bottom: none !important;
+                  }
+                  .table-custom td:first-child {
+                    flex: 1;
+                    min-width: 0; /* Important for flex child truncation */
+                  }
+                  .table-custom td:last-child {
+                    flex-shrink: 0;
+                  }
+                  .group-name-cell {
+                    font-size: 1.0625rem;
+                    margin-bottom: 0;
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                  }
+                  .group-name-cell span {
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    display: block;
+                  }
+                  .action-btns {
+                    justify-content: flex-end !important;
+                    padding-top: 0;
+                    border-top: none;
+                    margin-top: 0;
+                    gap: 0.35rem;
+                  }
+                  .btn-icon-custom {
+                    width: 32px !important;
+                    height: 32px !important;
+                    border-radius: 8px !important;
+                  }
+                  .btn-icon-custom svg {
+                    width: 16px !important;
+                    height: 16px !important;
+                  }
+                }
+        
+                @media (max-width: 480px) {
+                  .groups-title {
+                    font-size: 1.5rem !important;
+                  }
+                  .btn-icon-custom {
+                    flex: none; /* Don't grow on very small screens */
+                  }
+                  .action-btns {
+                    gap: 0.35rem;
+                    width: auto;
+                  }
+                }
         .modal-header-custom {
           padding: 1.25rem 1.5rem;
           background: #f8fafc;
@@ -322,7 +448,7 @@ export default function ContactGroups() {
       `}</style>
 
       <div className="groups-header">
-        <h1 className="groups-title">Contact groups</h1>
+        <h1 className="groups-title">Contact Groups</h1>
       </div>
 
       <div className="description-row">
@@ -371,38 +497,43 @@ export default function ContactGroups() {
           <p className="muted" style={{ fontWeight: 600 }}>No groups yet. Add a group to organize contacts and target campaigns.</p>
         </div>
       ) : (
-        <table className="table-custom">
-          <thead>
-            <tr>
-              <th>Group Name</th>
-              <th style={{ width: '100px', textAlign: 'right' }}>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {groups.map((g) => (
-              <tr key={g.id}>
-                <td>
-                  <div className="group-name-cell">
-                    <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', color: '#2b52a5', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Users size={16} />
-                    </div>
-                    {g.name}
-                  </div>
-                </td>
-                <td>
-                  <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
-                    <button type="button" className="btn-icon-custom" onClick={() => openEdit(g)} title="Edit">
-                      <Pencil size={20} />
-                    </button>
-                    <button type="button" className="btn-icon-custom delete" onClick={() => handleDelete(g.id)} title="Delete">
-                      <Trash2 size={20} />
-                    </button>
-                  </div>
-                </td>
+        <div className="table-container">
+          <table className="table-custom">
+            <thead>
+              <tr>
+                <th>Group Name</th>
+                <th style={{ width: '100px', textAlign: 'right' }}>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {groups.map((g) => (
+                <tr key={g.id}>
+                  <td>
+                    <div className="group-name-cell">
+                      <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#eff6ff', color: '#2b52a5', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <Users size={16} />
+                      </div>
+                      <span>{g.name}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="action-btns" style={{ justifyContent: 'flex-end' }}>
+                      <button type="button" className="btn-icon-custom" onClick={() => navigate(`/contacts?group_id=${g.id}`)} title="View contacts">
+                        <ExternalLink size={20} />
+                      </button>
+                      <button type="button" className="btn-icon-custom" onClick={() => openEdit(g)} title="Edit">
+                        <Pencil size={20} />
+                      </button>
+                      <button type="button" className="btn-icon-custom delete" onClick={() => handleDelete(g.id)} title="Delete">
+                        <Trash2 size={20} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

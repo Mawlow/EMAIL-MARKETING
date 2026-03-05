@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { UserPlus, Upload, Search, X, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { UserPlus, Upload, Search, X, Pencil, Trash2, ChevronLeft, ChevronRight, Filter } from 'lucide-react';
 import { company } from '../../api/client';
 
 const emptyForm = {
@@ -107,10 +108,33 @@ const styles = {
     background: 'transparent',
     backdropFilter: 'none',
     WebkitBackdropFilter: 'none'
+  },
+  filterBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    padding: '0.4rem 0.75rem',
+    background: '#eff6ff',
+    color: '#2b52a5',
+    borderRadius: '8px',
+    border: '1px solid #dbeafe',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    marginBottom: '1rem'
+  },
+  clearFilter: {
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    color: '#2b52a5',
+    opacity: 0.7
   }
 };
 
 export default function Contacts() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const groupIdFromUrl = searchParams.get('group_id');
+
   const [contacts, setContacts] = useState({ data: [], meta: {} });
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -126,7 +150,11 @@ export default function Contacts() {
   const fileRef = useRef(null);
 
   const load = () => {
-    company.contacts.list({ page, search: debouncedSearch || undefined })
+    company.contacts.list({ 
+      page, 
+      search: debouncedSearch || undefined,
+      group_id: groupIdFromUrl || undefined 
+    })
       .then(({ data }) => setContacts(data))
       .finally(() => {
         setLoading(false);
@@ -142,15 +170,23 @@ export default function Contacts() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch]);
+  }, [debouncedSearch, groupIdFromUrl]);
 
   useEffect(() => {
     load();
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, groupIdFromUrl]);
 
   useEffect(() => {
     company.contactGroups.list().then(({ data }) => setGroups(Array.isArray(data) ? data : []));
   }, []);
+
+  const clearGroupFilter = () => {
+    const newParams = new URLSearchParams(searchParams);
+    newParams.delete('group_id');
+    setSearchParams(newParams);
+  };
+
+  const selectedGroupName = groups.find(g => g.id === Number(groupIdFromUrl))?.name;
 
   const openAdd = () => {
     setEditing(null);
@@ -283,6 +319,16 @@ export default function Contacts() {
           </button>
         </div>
       </div>
+
+      {groupIdFromUrl && (
+        <div style={styles.filterBadge}>
+          <Filter size={14} />
+          <span>Group: {selectedGroupName || 'Loading...'}</span>
+          <div onClick={clearGroupFilter} style={styles.clearFilter} title="Clear filter">
+            <X size={14} strokeWidth={3} />
+          </div>
+        </div>
+      )}
 
       {showAddForm && (
         <div className="modal-backdrop" onClick={closeModal} style={styles.modalBackdrop}>
