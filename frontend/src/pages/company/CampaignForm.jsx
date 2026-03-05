@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Save } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { company } from '../../api/client';
 import RichTextEditor from '../../components/RichTextEditor';
 
@@ -9,16 +9,40 @@ const RECIPIENT_OPTIONS = [
   { value: 'contact_groups', label: 'Selected groups' },
 ];
 
-const PROFESSIONAL_TEMPLATE = `<h1>Welcome</h1>
-<p>Hi {{email}},</p>
-<p>Thanks for being with us. Here's what you need to know.</p>
-<h2>Quick links</h2>
-<ul>
-  <li><a href="#">Your account</a></li>
-  <li><a href="#">Help center</a></li>
-</ul>
-<p>To stop receiving these emails, <a href="{{unsubscribe_url}}">unsubscribe here</a>.</p>
-<p>— The Team</p>`;
+const PROFESSIONAL_TEMPLATE = `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; line-height: 1.5; color: #333; margin: 20px; }
+    .container { max-width: 600px; margin: 0 auto; border: 1px solid #eee; padding: 20px; border-radius: 8px; }
+    h1 { color: #2b52a5; }
+    .footer { margin-top: 30px; font-size: 12px; color: #777; border-top: 1px solid #eee; padding-top: 10px; }
+    .btn { display: inline-block; background: #2b52a5; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome</h1>
+    <p>Hi {{email}},</p>
+    <p>Thanks for being with us. Here's what you need to know.</p>
+    
+    <h2>Quick links</h2>
+    <ul>
+      <li><a href="#">Your account</a></li>
+      <li><a href="#">Help center</a></li>
+    </ul>
+    
+    <p style="margin-top: 30px;">
+      <a href="#" class="btn">Visit our website</a>
+    </p>
+
+    <div class="footer">
+      <p>— The Team</p>
+      <p>To stop receiving these emails, <a href="{{unsubscribe_url}}">unsubscribe here</a>.</p>
+    </div>
+  </div>
+</body>
+</html>`;
 
 export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = {}) {
   const { id: paramsId } = useParams();
@@ -187,7 +211,7 @@ export default function CampaignForm({ asModal, onSuccess, onCancel, editId } = 
           </div>
         </div>
         <div className={asModal ? 'form-actions modal-actions' : 'form-actions'}>
-          <button type="submit" disabled={saving}><Save size={16} /> {saving ? 'Saving...' : 'Save'}</button>
+          <button type="submit" disabled={saving}><ArrowRight size={16} /> {saving ? 'Sending...' : 'Send'}</button>
           <button type="button" onClick={() => { if (onCancel) onCancel(); else navigate('/campaigns'); }}>Cancel</button>
         </div>
       </form>

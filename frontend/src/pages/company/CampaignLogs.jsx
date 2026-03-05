@@ -1,9 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft } from 'lucide-react';
 import { company } from '../../api/client';
 
 const styles = {
+  page: {
+    background: '#ffffff',
+    color: '#000000',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
+    padding: '1.75rem',
+    borderRadius: '12px'
+  },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -20,6 +28,17 @@ const styles = {
     gap: '0.75rem',
     alignItems: 'center',
     margin: 0
+  },
+  table: {
+    color: '#000000'
+  },
+  tableHeader: {
+    color: '#1e293b',
+    borderBottom: '2px solid #94a3b8'
+  },
+  tableCell: {
+    borderBottom: '1px solid #cbd5e1',
+    color: '#000000'
   },
   badge: {
     display: 'inline-flex',
@@ -69,12 +88,12 @@ export default function CampaignLogs() {
   if (loading) return <div className="page-loading">Loading...</div>;
 
   return (
-    <div className="page">
+    <div className="page" style={styles.page}>
       <div style={styles.header}>
         <h1 style={styles.title}>Campaign email logs</h1>
-        <div className="toolbar" style={styles.toolbar}>
-          <button type="button" className="btn btn-primary" onClick={() => navigate('/campaigns')}>
-            <Plus size={18} /> New campaign
+        <div className="toolbar" style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
+          <button type="button" className="btn btn-secondary" onClick={() => navigate('/campaigns')}>
+            <ArrowLeft size={18} /> Back to campaigns
           </button>
           <select 
             value={status} 
@@ -88,30 +107,49 @@ export default function CampaignLogs() {
           </select>
         </div>
       </div>
-      <table className="table">
+      
+      <table className="table" style={styles.table}>
         <thead>
           <tr>
-            <th>Recipient</th>
-            <th>Status</th>
-            <th>Opened</th>
-            <th>Error</th>
-            <th>Sent at</th>
+            <th style={styles.tableHeader}>Recipient</th>
+            <th style={styles.tableHeader}>Status</th>
+            <th style={styles.tableHeader}>Opened</th>
+            <th style={styles.tableHeader}>Error</th>
+            <th style={styles.tableHeader}>Sent at</th>
           </tr>
         </thead>
         <tbody>
           {logs.data?.map((l) => (
             <tr key={l.id}>
-              <td>{l.recipient_email}</td>
-              <td>
+              <td style={styles.tableCell}>{l.recipient_email}</td>
+              <td style={styles.tableCell}>
                 <span style={{ ...styles.badge, ...styles.getStatusStyle(l.status) }}>
                   {l.status}
                 </span>
               </td>
-              <td>{l.opened_at ? new Date(l.opened_at).toLocaleString() : '—'}</td>
-              <td>{l.error_message || '—'}</td>
-              <td>{l.sent_at ? new Date(l.sent_at).toLocaleString() : '—'}</td>
+              <td style={styles.tableCell}>
+                {l.opened_at ? (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <span style={{ ...styles.badge, background: '#10b981', color: '#fff' }}>
+                      Opened
+                    </span>
+                    <span style={{ fontSize: '0.85rem' }}>
+                      {new Date(l.opened_at).toLocaleString()}
+                    </span>
+                  </div>
+                ) : '—'}
+              </td>
+              <td style={styles.tableCell}>{l.error_message || '—'}</td>
+              <td style={styles.tableCell}>{l.sent_at ? new Date(l.sent_at).toLocaleString() : '—'}</td>
             </tr>
           ))}
+          {logs.data?.length === 0 && (
+            <tr>
+              <td colSpan="5" style={{ ...styles.tableCell, textAlign: 'center', padding: '2rem' }}>
+                No logs found for this campaign.
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       {logs.meta?.last_page > 1 && (
