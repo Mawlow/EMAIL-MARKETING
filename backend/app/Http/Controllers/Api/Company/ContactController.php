@@ -25,6 +25,11 @@ class ContactController extends Controller
                     ->orWhere('last_name', 'like', '%' . $request->search . '%');
             });
         }
+        if ($request->has('group_id')) {
+            $query->whereHas('groups', function ($q) use ($request) {
+                $q->where('contact_groups.id', $request->group_id);
+            });
+        }
         $contacts = $query->with('groups')->orderBy('created_at', 'desc')->paginate($request->get('per_page', 15));
         return response()->json($contacts);
     }
