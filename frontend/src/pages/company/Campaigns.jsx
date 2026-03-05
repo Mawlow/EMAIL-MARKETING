@@ -4,6 +4,7 @@ import { Plus, Send as SendIcon, FileText, Pencil, Trash2, RotateCw, ChevronLeft
 import { company } from '../../api/client';
 import CampaignForm from './CampaignForm';
 import ErrorBoundary from '../../components/ErrorBoundary';
+import stylesModule from './Campaigns.module.css';
 
 const styles = {
   page: {
@@ -168,14 +169,15 @@ export default function CompanyCampaigns() {
   if (loading) return <div className="page-loading">Loading...</div>;
 
   return (
-    <div className="page" style={styles.page}>
+    <div className={`page ${stylesModule.page}`} style={styles.page}>
       <div style={styles.header}>
         <h1 style={styles.title}>Campaigns</h1>
-        <div className="toolbar" style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
-          <button type="button" className="btn btn-primary" onClick={() => setShowNewModal(true)}><Plus size={18} /> New campaign</button>
+        <div className={`toolbar ${stylesModule.toolbar}`} style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
+          <button type="button" className={`btn btn-primary ${stylesModule.btn} ${stylesModule.btnPrimary}`} onClick={() => setShowNewModal(true)}><Plus size={18} /> New campaign</button>
           <select 
             value={status} 
             onChange={(e) => setStatus(e.target.value)}
+            className={stylesModule.toolbarSelect}
             style={{ backgroundColor: '#2b52a5', color: '#fff', borderColor: '#2b52a5' }}
           >
             <option value="">All statuses</option>
@@ -185,7 +187,7 @@ export default function CompanyCampaigns() {
           </select>
         </div>
       </div>
-      <table className="table" style={styles.table}>
+      <table className={`table ${stylesModule.table}`} style={styles.table}>
         <thead>
           <tr>
             <th style={styles.tableHeader}>Name</th>
@@ -211,18 +213,18 @@ export default function CompanyCampaigns() {
               <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>
               <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>
               <td style={styles.tableCell}>
-                <button type="button" className="btn-icon" onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569' }}><Pencil size={16} /></button>
-                {c.status === 'draft' && <button type="button" className="btn-icon" onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
-                {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className="btn-icon" onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>}
-                <Link to={`/campaigns/${c.id}/logs`} className="btn-icon" title="Logs" style={{ color: '#475569' }}><FileText size={16} /></Link>
-                {c.status !== 'sending' && <button type="button" className="btn-icon" onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
+                <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569' }}><Pencil size={16} /></button>
+                {c.status === 'draft' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
+                {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>}
+                <Link to={`/campaigns/${c.id}/logs`} className={`btn-icon ${stylesModule.btnIcon}`} title="Logs" style={{ color: '#475569' }}><FileText size={16} /></Link>
+                {c.status !== 'sending' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
       {campaigns.meta?.last_page > 1 && (
-        <div className="pagination">
+        <div className={`pagination ${stylesModule.pagination}`}>
           <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
           <span>Page {page} of {campaigns.meta.last_page}</span>
           <button type="button" disabled={page >= campaigns.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>

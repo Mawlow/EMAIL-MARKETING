@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Pencil, Trash2, X } from 'lucide-react';
 import { company } from '../../api/client';
+import stylesModule from './Senders.module.css';
 
 const defaultForm = {
   name: '',
@@ -245,32 +246,14 @@ export default function Senders() {
     setForm(defaultForm);
   };
 
-  if (loading) return <div className="page-loading">Loading...</div>;
+  if (loading) return <div className={`page-loading ${stylesModule.pageLoading}`}>Loading...</div>;
 
   return (
-    <div className="page" style={styles.page}>
-      <style>{`
-        .action-btn-edit:hover {
-          background-color: #f1f5f9 !important;
-          border-color: #94a3b8 !important;
-          color: #0f172a !important;
-        }
-        .action-btn-delete:hover {
-          background-color: #f1f5f9 !important;
-          border-color: #94a3b8 !important;
-          color: #0f172a !important;
-        }
-        .modal-body .form input,
-        .modal-body .form select {
-          width: 100% !important;
-          max-width: 100% !important;
-          box-sizing: border-box !important;
-        }
-      `}</style>
+    <div className={`page ${stylesModule.page}`} style={styles.page}>
       <div style={styles.header}>
         <h1 style={styles.title}>Senders</h1>
-        <div className="toolbar" style={styles.toolbar}>
-          <button type="button" className="btn btn-primary" onClick={openNew} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff', fontWeight: 600, padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
+        <div className={`toolbar ${stylesModule.toolbar}`} style={styles.toolbar}>
+          <button type="button" className={`btn btn-primary ${stylesModule.btn} ${stylesModule.btnPrimary}`} onClick={openNew} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff', fontWeight: 600, padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}>
             + Add sender
           </button>
         </div>
@@ -282,26 +265,26 @@ export default function Senders() {
               <h3 style={{ margin: 0, color: '#000' }}>{editing ? 'Edit sender' : 'Add sender'}</h3>
               <button type="button" className="modal-close" onClick={closeModal} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
             </div>
-            <form onSubmit={handleSubmit} className="form modal-body" style={styles.modalBody}>
-              <label style={styles.label}>Full Name <input style={styles.input} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. John Doe" required /></label>
-              <label style={styles.label}>Email <input style={styles.input} type="email" value={form.from_email} onChange={(e) => setForm((f) => ({ ...f, from_email: e.target.value }))} required /></label>
-              <label style={styles.label}>Password <input style={styles.input} type="password" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="App password" required={!editing} /></label>
-              <div style={styles.modalRow}>
-                <label style={{ ...styles.label, ...styles.hostField }}>Host <input style={styles.input} value={form.host} onChange={(e) => setForm((f) => ({ ...f, host: e.target.value }))} placeholder="smtp.gmail.com" required /></label>
-                <label style={{ ...styles.label, ...styles.portField }}>Port <input style={styles.input} type="number" min={1} max={65535} value={form.port} onChange={(e) => setForm((f) => ({ ...f, port: parseInt(e.target.value, 10) || 587 }))} /></label>
+            <form onSubmit={handleSubmit} className={`form modal-body ${stylesModule.modalBody}`} style={styles.modalBody}>
+              <label className={stylesModule.label}>Full Name <input className={stylesModule.input} style={styles.input} value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. John Doe" required /></label>
+              <label className={stylesModule.label}>Email <input className={stylesModule.input} style={styles.input} type="email" value={form.from_email} onChange={(e) => setForm((f) => ({ ...f, from_email: e.target.value }))} required /></label>
+              <label className={stylesModule.label}>Password <input className={stylesModule.input} style={styles.input} type="password" value={form.password} onChange={(e) => setForm((f) => ({ ...f, password: e.target.value }))} placeholder="App password" required={!editing} /></label>
+              <div className={stylesModule.modalRow} style={styles.modalRow}>
+                <label className={`${stylesModule.label} ${stylesModule.hostField}`} style={styles.hostField}>Host <input className={stylesModule.input} style={styles.input} value={form.host} onChange={(e) => setForm((f) => ({ ...f, host: e.target.value }))} placeholder="smtp.gmail.com" required /></label>
+                <label className={`${stylesModule.label} ${stylesModule.portField}`} style={styles.portField}>Port <input className={stylesModule.input} style={styles.input} type="number" min={1} max={65535} value={form.port} onChange={(e) => setForm((f) => ({ ...f, port: parseInt(e.target.value, 10) || 587 }))} /></label>
               </div>
-              <label style={styles.label}>Encryption <select style={styles.input} value={form.encryption} onChange={(e) => setForm((f) => ({ ...f, encryption: e.target.value }))}>
+              <label className={stylesModule.label}>Encryption <select className={stylesModule.input} style={styles.input} value={form.encryption} onChange={(e) => setForm((f) => ({ ...f, encryption: e.target.value }))}>
                 <option value="null">None</option>
                 <option value="tls">TLS</option>
                 <option value="ssl">SSL</option>
               </select></label>
-              <label style={styles.label}>Status <select style={styles.input} value={form.is_active ? 'active' : 'inactive'} onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.value === 'active' }))}>
+              <label className={stylesModule.label}>Status <select className={stylesModule.input} style={styles.input} value={form.is_active ? 'active' : 'inactive'} onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.value === 'active' }))}>
                 <option value="active">Active</option>
                 <option value="inactive">Inactive</option>
               </select></label>
-              <div className="form-actions modal-actions">
-                <button type="submit" style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff' }}>Save</button>
-                <button type="button" onClick={closeModal} style={{ color: '#000' }}>Cancel</button>
+              <div className={`form-actions modal-actions ${stylesModule.modalActions}`}>
+                <button type="submit" className={`${stylesModule.btn} ${stylesModule.btnPrimary}`} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff' }}>Save</button>
+                <button type="button" className={stylesModule.btn} onClick={closeModal} style={{ color: '#000' }}>Cancel</button>
               </div>
             </form>
           </div>
@@ -315,19 +298,19 @@ export default function Senders() {
               <h3 style={{ margin: 0, color: '#000' }}>Confirm Deletion</h3>
               <button type="button" className="modal-close" onClick={() => setDeleteConfirm(null)} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
             </div>
-            <div className="modal-body" style={styles.modalBody}>
+            <div className={`modal-body ${stylesModule.modalBody}`} style={styles.modalBody}>
               <p style={{ margin: 0, color: '#000' }}>Are you sure you want to delete the sender <strong>"{deleteConfirm.name}"</strong>?</p>
               <p style={{ marginTop: '0.5rem', color: '#dc2626', fontSize: '0.875rem' }}>This action cannot be undone.</p>
-              <div style={styles.modalActions}>
-                <button type="button" className="btn" onClick={() => setDeleteConfirm(null)} style={{ color: '#000' }}>Cancel</button>
-                <button type="button" style={styles.btnConfirm} onClick={executeDelete}>Yes, Delete Sender</button>
+              <div className={`modal-actions ${stylesModule.modalActions}`} style={styles.modalActions}>
+                <button type="button" className={`btn ${stylesModule.btn}`} onClick={() => setDeleteConfirm(null)} style={{ color: '#000' }}>Cancel</button>
+                <button type="button" className={stylesModule.btn} style={styles.btnConfirm} onClick={executeDelete}>Yes, Delete Sender</button>
               </div>
             </div>
           </div>
         </div>
       )}
 
-      <table className="table" style={styles.table}>
+      <table className={`table ${stylesModule.table}`} style={styles.table}>
         <thead>
           <tr>
             <th style={styles.tableHeader}>Name</th>
@@ -344,13 +327,13 @@ export default function Senders() {
               <td style={styles.tableCell}>{s.from_email || '—'}</td>
               <td style={styles.tableCell}>{s.host ? `${s.host}:${s.port ?? 587}` : '—'}</td>
               <td style={styles.tableCell}>
-                <span style={{ ...styles.badge, ...styles.getStatusStyle(s.is_active) }}>
+                <span className={`${stylesModule.badge} ${s.is_active ? stylesModule.badgeActive : stylesModule.badgeInactive}`} style={styles.getStatusStyle(s.is_active)}>
                   {s.is_active ? 'Active' : 'Inactive'}
                 </span>
               </td>
               <td style={styles.tableCell}>
-                <button type="button" className="btn-icon action-btn-edit" onClick={() => handleEdit(s)} title="Edit" style={{ ...styles.actionBtn, color: '#475569' }}><Pencil size={16} /></button>
-                <button type="button" className="btn-icon action-btn-delete" onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#475569' }}><Trash2 size={16} /></button>
+                <button type="button" className={`btn-icon action-btn-edit ${stylesModule.btnIcon} ${stylesModule.actionBtn} action-btn-edit`} onClick={() => handleEdit(s)} title="Edit" style={{ ...styles.actionBtn, color: '#475569' }}><Pencil size={16} /></button>
+                <button type="button" className={`btn-icon action-btn-delete ${stylesModule.btnIcon} ${stylesModule.actionBtn} action-btn-delete`} onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#475569' }}><Trash2 size={16} /></button>
               </td>
             </tr>
           ))}

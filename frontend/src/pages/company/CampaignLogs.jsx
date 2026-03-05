@@ -53,6 +53,7 @@ const styles = {
   getStatusStyle: (status) => {
     switch (status) {
       case 'sent':
+      case 'opened':
       case 'completed':
       case 'active':
         return { background: '#2b52a5', color: '#fff' };
@@ -103,6 +104,7 @@ export default function CampaignLogs() {
             <option value="">All statuses</option>
             <option value="pending">Pending</option>
             <option value="sent">Sent</option>
+            <option value="opened">Opened</option>
             <option value="failed">Failed</option>
           </select>
         </div>

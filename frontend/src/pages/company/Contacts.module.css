@@ -1,0 +1,192 @@
+.page {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  border: 1px solid #e2e8f0;
+}
+
+.page h1 {
+  margin: 0 0 1.25rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.toolbar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.searchWrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchWrap svg {
+  position: absolute;
+  left: 0.75rem;
+  color: #0f172a;
+  pointer-events: none;
+}
+
+.searchInput[type="search"] {
+  padding: 0.5rem 0.875rem 0.5rem 2.5rem;
+  border: 1px solid #0f172a;
+  border-radius: 8px;
+  height: 38px;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.875rem;
+  background: #ffffff;
+  color: #000000;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, .table td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.table th {
+  font-weight: 600;
+  color: #64748b;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.table tbody tr:hover {
+  background: #fafafa;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btnPrimary {
+  background: #2b52a5;
+  color: #fff;
+}
+
+.btnPrimary:hover {
+  background: #9ab3f7;
+}
+
+.btnImport {
+  background: #2b52a5;
+  color: #fff;
+  border: 1px solid #2b52a5;
+}
+
+.btnIcon {
+  background: transparent;
+  border: none;
+  padding: 0.35rem;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #64748b;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.actionBtnEdit:hover, .actionBtnDelete:hover {
+  background-color: #f1f5f9 !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.pagination button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #334155;
+}
+
+.pageLoading {
+  padding: 2.5rem;
+  text-align: center;
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+.modalRow {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.125rem;
+  align-items: flex-end;
+}
+
+.fieldHalf {
+  flex: 1;
+}
+
+.modalBody {
+  padding: 1.5rem;
+  color: #000;
+}
+
+.modalActions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  marginTop: 1.5rem;
+  paddingTop: 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.marketingBadge {
+  display: inline-flex;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.marketingYes {
+  border: 1px solid #10b981;
+  background: #10b981;
+  color: #fff;
+}
+
+.marketingNo {
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  color: #64748b;
+}

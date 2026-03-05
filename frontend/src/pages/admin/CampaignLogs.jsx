@@ -138,6 +138,7 @@ export default function AdminCampaignLogs() {
             gap: 0.4rem; 
         }
         .log-sent { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .log-opened { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
         .log-failed { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
         .log-pending { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
 
@@ -186,6 +187,7 @@ export default function AdminCampaignLogs() {
           <option value="">All statuses</option>
           <option value="pending">Pending</option>
           <option value="sent">Sent</option>
+          <option value="opened">Opened</option>
           <option value="failed">Failed</option>
         </select>
       </div>
@@ -205,7 +207,7 @@ export default function AdminCampaignLogs() {
               <td style={{ fontFamily: 'monospace' }}>{l.recipient_email}</td>
               <td>
                 <span className={`log-status log-${l.status}`}>
-                    {l.status === 'sent' && <CheckCircle size={12} />}
+                    {(l.status === 'sent' || l.status === 'opened') && <CheckCircle size={12} />}
                     {l.status === 'failed' && <AlertCircle size={12} />}
                     {l.status === 'pending' && <Clock size={12} />}
                     {l.status}

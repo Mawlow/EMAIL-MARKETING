@@ -18,7 +18,10 @@ class TrackOpenController extends Controller
         if ($logId) {
             $log = CampaignEmailLog::find($logId);
             if ($log && $log->status === CampaignEmailLog::STATUS_SENT && $log->opened_at === null) {
-                $log->update(['opened_at' => now()]);
+                $log->update([
+                    'opened_at' => now(),
+                    'status' => CampaignEmailLog::STATUS_OPENED,
+                ]);
             }
         }
 

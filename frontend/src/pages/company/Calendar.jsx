@@ -4,6 +4,7 @@ import { format, parse, startOfWeek, getDay, startOfMonth, endOfMonth, startOfDa
 import enUS from 'date-fns/locale/en-US';
 import { company } from '../../api/client';
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import styles from './Calendar.module.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = dateFnsLocalizer({
@@ -219,9 +220,9 @@ export default function Calendar() {
   const DateHeader = ({ date: headerDate, label }) => {
     const isToday = isSameDay(headerDate, new Date());
     return (
-      <div className="custom-column-header">
-        <div className="header-day-name">{format(headerDate, 'EEE')}</div>
-        <div className={`header-date-number ${isToday ? 'today' : ''}`}>
+      <div className={styles.customColumnHeader}>
+        <div className={styles.headerDayName}>{format(headerDate, 'EEE')}</div>
+        <div className={`${styles.headerDateNumber} ${isToday ? styles.headerDateNumberToday : ''}`}>
           {format(headerDate, 'd')}
         </div>
       </div>
@@ -237,21 +238,21 @@ export default function Calendar() {
 
     return (
       <div 
-        className={`custom-month-cell ${isOffRange ? 'rbc-off-range' : ''}`}
+        className={`${styles.customMonthCell} ${isOffRange ? styles.customMonthCellOffRange : ''}`}
         onClick={() => openNew({ start: value, end: value })}
       >
-        <div className="custom-date-number-label">
+        <div className={styles.customDateNumberLabel}>
           {isToday ? (
-            <span className="today-circle-indicator">{format(value, 'd')}</span>
+            <span className={styles.todayCircleIndicator}>{format(value, 'd')}</span>
           ) : (
             format(value, 'd')
           )}
         </div>
-        <div className="custom-event-bands-stack">
+        <div className={styles.customEventBandsStack}>
           {dayEvents.map(e => (
             <div
               key={e.id}
-              className="custom-horizontal-band"
+              className={styles.customHorizontalBand}
               style={{
                 backgroundColor: getEventColor(e.id) + '33', // 20% opacity
                 color: getEventColor(e.id)
@@ -270,353 +271,20 @@ export default function Calendar() {
   };
 
   return (
-    <div className="page page-calendar-override">
-      <style>{`
-        .page-calendar-override {
-          background: #fff !important;
-          color: #0f172a !important;
-          border: 1px solid #e2e8f0 !important;
-          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
-          backdrop-filter: none !important;
-          -webkit-backdrop-filter: none !important;
-          padding: 1.5rem !important;
-        }
-        
-        .calendar-custom-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 1rem;
-        }
-        
-        .calendar-title {
-          margin: 0 !important;
-          font-size: 2.25rem !important;
-          font-weight: 800 !important;
-          color: #0f172a !important;
-          letter-spacing: -0.025em !important;
-        }
-
-        .calendar-subnav {
-          display: flex;
-          gap: 0.5rem;
-          margin-bottom: 1rem;
-          border-bottom: 1px solid #e2e8f0;
-          padding-bottom: 0.5rem;
-        }
-
-        .subnav-btn {
-          background: transparent;
-          border: none;
-          padding: 0.5rem 1rem;
-          font-size: 0.9375rem;
-          font-weight: 500;
-          color: #64748b;
-          cursor: pointer;
-          border-radius: 6px;
-          transition: all 0.2s;
-        }
-
-        .subnav-btn:hover {
-          color: #0f172a;
-          background: #f1f5f9;
-        }
-
-        .subnav-btn.active {
-          color: #2b52a5;
-          background: #eff6ff;
-          font-weight: 600;
-        }
-
-        .calendar-nav-row {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 0.75rem;
-        }
-
-        .calendar-current-label {
-          font-size: 1.25rem;
-          font-weight: 700;
-          color: #0f172a;
-          text-transform: capitalize;
-        }
-
-        .calendar-nav-controls {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .nav-arrow-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 32px;
-          height: 32px;
-          border-radius: 50%;
-          border: 1px solid #e2e8f0;
-          background: #fff;
-          color: #0f172a;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .nav-arrow-btn:hover {
-          background: #f1f5f9;
-          border-color: #cbd5e1;
-        }
-
-        .nav-today-btn {
-          padding: 0.4rem 1rem;
-          border-radius: 6px;
-          border: 1px solid #e2e8f0;
-          background: #fff;
-          font-size: 0.875rem;
-          font-weight: 500;
-          cursor: pointer;
-        }
-
-        .nav-today-btn:hover {
-          background: #f1f5f9;
-        }
-
-        .calendar-wrap .rbc-calendar {
-          background: #fff !important;
-          color: #0f172a !important;
-          padding: 0 !important;
-        }
-        
-        .calendar-wrap .rbc-month-view {
-          border: 1px solid #e2e8f0 !important;
-          border-radius: 8px !important;
-          overflow: hidden;
-          background: #fff !important;
-        }
-
-        /* HIDE default layers in Month view to use our custom DateCellWrapper logic */
-        .calendar-wrap.view-month .rbc-row-content {
-          pointer-events: none !important;
-        }
-        .calendar-wrap.view-month .rbc-row-content .rbc-row:first-child {
-          visibility: hidden !important; /* Hide standard date numbers */
-        }
-        .calendar-wrap.view-month .rbc-event,
-        .calendar-wrap.view-month .rbc-show-more {
-          display: none !important; /* Hide standard events */
-        }
-
-        /* CUSTOM CELL GRID FIXES */
-        .custom-month-cell {
-          height: 100%;
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          position: relative;
-          background: #fff;
-          cursor: pointer;
-          pointer-events: auto !important;
-          border-left: 1px solid #e2e8f0;
-        }
-        .custom-month-cell:first-child { border-left: none; }
-        .custom-month-cell.rbc-off-range { background: #fcfcfc !important; }
-
-        .custom-date-number-label {
-          padding: 4px 8px;
-          font-weight: 700;
-          font-size: 0.95rem;
-          color: #0f172a;
-          position: absolute;
-          top: 0;
-          left: 0;
-          z-index: 10;
-          height: 32px;
-          display: flex;
-          align-items: center;
-        }
-        .custom-month-cell.rbc-off-range .custom-date-number-label {
-          color: #94a3b8;
-          opacity: 0.4;
-        }
-        .today-circle-indicator {
-          display: inline-flex;
-          width: 24px;
-          height: 24px;
-          background: #2b52a5;
-          color: #fff;
-          border-radius: 50%;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .custom-event-bands-stack {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          height: 100%;
-          padding-top: 32px; /* Reserve space for the date number label */
-        }
-        .custom-horizontal-band {
-          flex: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          text-align: center;
-          font-weight: 700;
-          font-size: 0.85rem;
-          padding: 0 8px;
-          transition: filter 0.2s;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .custom-horizontal-band:hover {
-          filter: brightness(0.95);
-        }
-
-        .calendar-wrap .rbc-header {
-          color: #2b52a5 !important;
-          background: #eff6ff !important;
-          border-bottom: 1px solid #e2e8f0 !important;
-          padding: 0 !important;
-          font-weight: 700 !important;
-          font-size: 0.875rem !important;
-          text-transform: uppercase;
-        }
-
-        .calendar-wrap .rbc-header + .rbc-header {
-          border-left: 1px solid #e2e8f0 !important;
-        }
-
-        /* CUSTOM DAY/WEEK HEADER - Same as Month Date Labels */
-        .custom-column-header {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 8px 0;
-          gap: 4px;
-        }
-        .header-day-name {
-          font-size: 0.75rem;
-          font-weight: 700;
-          color: #64748b;
-          text-transform: uppercase;
-        }
-        .header-date-number {
-          font-size: 1.1rem;
-          font-weight: 800;
-          color: #0f172a;
-          width: 32px;
-          height: 32px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-        }
-        .header-date-number.today {
-          background: #2b52a5 !important;
-          color: #fff !important;
-        }
-
-        /* WEEK / DAY VIEW SPECIFIC FIXES - Same style as Month Bands */
-        .calendar-wrap:not(.view-month) .rbc-event {
-          border-radius: 4px !important;
-          padding: 4px 10px !important;
-          font-weight: 800 !important;
-          font-size: 0.85rem !important;
-          border: none !important;
-          border-left: 4px solid currentColor !important;
-          overflow: visible !important; 
-          min-height: 28px !important;
-        }
-
-        .calendar-wrap:not(.view-month) .rbc-event-content {
-          overflow: visible !important;
-          white-space: normal !important;
-          word-break: break-word !important;
-          line-height: 1.2 !important;
-        }
-
-        .calendar-wrap:not(.view-month) .rbc-event-label {
-          font-size: 0.75rem !important;
-          font-weight: 700 !important;
-          opacity: 0.9 !important;
-          margin-bottom: 2px !important;
-        }
-
-        /* Today's indicator for Week/Day views */
-        .calendar-wrap .rbc-time-view .rbc-now .rbc-button-link {
-          background: #2b52a5 !important;
-          color: #fff !important;
-          border-radius: 50% !important;
-        }
-
-        .btn-new-event {
-          background-color: #2b52a5 !important;
-          color: white !important;
-          border: none !important;
-          padding: 0.8rem 1.75rem !important;
-          font-size: 1.1rem !important;
-          font-weight: 700 !important;
-          border-radius: 10px !important;
-          display: flex;
-          align-items: center;
-          gap: 0.6rem;
-          cursor: pointer;
-          transition: all 0.2s;
-          box-shadow: 0 4px 12px rgba(43, 82, 165, 0.2) !important;
-        }
-        .btn-new-event:hover {
-          background-color: #9ab3f7 !important;
-          transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(43, 82, 165, 0.3) !important;
-        }
-        .btn-new-event svg {
-          width: 22px !important;
-          height: 22px !important;
-        }
-
-        /* Modal Styles */
-        .modal-dialog {
-          background: #fff !important;
-          border-radius: 12px !important;
-          border: 1px solid #e2e8f0 !important;
-          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1) !important;
-        }
-        .modal-header {
-          background: #f8fafc !important;
-          border-bottom: 1px solid #e2e8f0 !important;
-          padding: 1.25rem 1.5rem !important;
-        }
-        .modal-actions {
-          padding: 1.25rem 1.5rem !important;
-          border-top: 1px solid #e2e8f0 !important;
-          background: #f8fafc !important;
-        }
-        .modal-actions button[type="submit"] {
-          background-color: #2b52a5 !important;
-          color: #fff !important;
-          border: none !important;
-          padding: 0.65rem 1.5rem !important;
-          font-weight: 600 !important;
-          border-radius: 8px !important;
-        }
-      `}</style>
-
-      <div className="calendar-custom-header">
-        <h1 className="calendar-title">Event calendar</h1>
-        <button type="button" className="btn-new-event" onClick={() => openNew()}>
+    <div className={`page ${styles.page}`}>
+      <div className={styles.calendarCustomHeader}>
+        <h1 className={styles.calendarTitle}>Event calendar</h1>
+        <button type="button" className={styles.btnNewEvent} onClick={() => openNew()}>
           <Plus size={22} /> New event
         </button>
       </div>
 
-      <div className="calendar-subnav">
+      <div className={styles.calendarSubnav}>
         {['month', 'week', 'day', 'agenda'].map((v) => (
           <button
             key={v}
             type="button"
-            className={`subnav-btn ${view === v ? 'active' : ''}`}
+            className={`${styles.subnavBtn} ${view === v ? styles.subnavBtnActive : ''}`}
             onClick={() => setView(v)}
           >
             {v.charAt(0).toUpperCase() + v.slice(1)}
@@ -624,24 +292,24 @@ export default function Calendar() {
         ))}
       </div>
 
-      <div className="calendar-nav-row">
-        <div className="calendar-current-label">
+      <div className={styles.calendarNavRow}>
+        <div className={styles.calendarCurrentLabel}>
           {format(date, view === 'month' ? 'MMMM yyyy' : 'MMM d, yyyy')}
         </div>
-        <div className="calendar-nav-controls">
-          <button type="button" className="nav-arrow-btn" onClick={navigatePrev} title="Previous">
+        <div className={styles.calendarNavControls}>
+          <button type="button" className={styles.navArrowBtn} onClick={navigatePrev} title="Previous">
             <ChevronLeft size={20} />
           </button>
-          <button type="button" className="nav-today-btn" onClick={navigateToday}>
+          <button type="button" className={styles.navTodayBtn} onClick={navigateToday}>
             Today
           </button>
-          <button type="button" className="nav-arrow-btn" onClick={navigateNext} title="Next">
+          <button type="button" className={styles.navArrowBtn} onClick={navigateNext} title="Next">
             <ChevronRight size={20} />
           </button>
         </div>
       </div>
 
-      <div className={`calendar-wrap ${view === 'month' ? 'view-month' : ''}`}>
+      <div className={`${styles.calendarWrap} ${view === 'month' ? styles.calendarWrapViewMonth : styles.calendarWrapNotMonth}`}>
         <BigCalendar
           localizer={localizer}
           events={events}
@@ -681,8 +349,8 @@ export default function Calendar() {
 
       {showModal && (
         <div className="modal-backdrop" onClick={handleCloseModal}>
-          <div className="modal-dialog" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-header">
+          <div className={`modal-dialog ${styles.modalDialog}`} onClick={(e) => e.stopPropagation()}>
+            <div className={`modal-header ${styles.modalHeader}`}>
               <h3>{editing ? 'Edit event' : 'New event'}</h3>
               <button type="button" className="modal-close" onClick={handleCloseModal} aria-label="Close"><X /></button>
             </div>
@@ -691,7 +359,7 @@ export default function Calendar() {
               <label>Description <textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} rows={3} style={{ minHeight: 'auto' }} /></label>
               <label>Start <input type="datetime-local" value={form.start_at} onChange={(e) => setForm((f) => ({ ...f, start_at: e.target.value }))} required /></label>
               <label>End <input type="datetime-local" value={form.end_at} onChange={(e) => setForm((f) => ({ ...f, end_at: e.target.value }))} required /></label>
-              <div className="form-actions modal-actions">
+              <div className={`form-actions modal-actions ${styles.modalActions}`}>
                 {editing && (
                   <button type="button" className="btn btn-ghost" onClick={handleDelete} style={{ marginRight: 'auto' }}>Delete</button>
                 )}
