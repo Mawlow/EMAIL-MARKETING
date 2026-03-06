@@ -23,9 +23,19 @@ class CampaignController extends Controller
     {
         $companyId = $request->user()->company_id;
         $query = Campaign::where('company_id', $companyId);
-        if ($request->has('status')) {
+        
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function($q) use ($s) {
+                $q->where('name', 'like', "%{$s}%")
+                  ->orWhere('subject', 'like', "%{$s}%");
+            });
+        }
+
+        if ($request->has('status') && $request->status !== '') {
             $query->where('status', $request->status);
         }
+        
         $campaigns = $query->orderBy('created_at', 'desc')->paginate($request->get('per_page', 15));
         return response()->json($campaigns);
     }

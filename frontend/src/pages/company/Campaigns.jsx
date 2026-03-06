@@ -5,6 +5,7 @@ import { company } from '../../api/client';
 import CampaignForm from './CampaignForm';
 import ErrorBoundary from '../../components/ErrorBoundary';
 import stylesModule from './Campaigns.module.css';
+import EnhancedSearchInput from '../../components/EnhancedSearchInput';
 
 const styles = {
   page: {
@@ -124,6 +125,8 @@ export default function CompanyCampaigns() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [showNewModal, setShowNewModal] = useState(false);
   const [editCampaignId, setEditCampaignId] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
@@ -133,12 +136,24 @@ export default function CompanyCampaigns() {
   const load = () => {
     const params = { page };
     if (status) params.status = status;
+    if (debouncedSearch) params.search = debouncedSearch;
     company.campaigns.list(params).then(({ data }) => setCampaigns(data)).finally(() => setLoading(false));
   };
 
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, status]);
+
+  useEffect(() => {
     load();
-  }, [page, status]);
+  }, [page, status, debouncedSearch]);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -188,8 +203,6 @@ export default function CompanyCampaigns() {
     setViewing(null);
   };
 
-  if (loading) return <div className="page-loading">Loading...</div>;
-
   return (
     <div className={`page ${stylesModule.page}`} style={styles.page}>
       <style>{`
@@ -232,50 +245,18 @@ export default function CompanyCampaigns() {
             overflow: hidden;
             text-overflow: ellipsis;
           }
-          .table th:nth-child(1), .table td:nth-child(1) {
-            max-width: 120px;
-          }
-          .table th:nth-child(2), .table td:nth-child(2) {
-            max-width: 150px;
-          }
-          .table th:nth-child(3), .table td:nth-child(3) {
-            max-width: 120px;
-            text-align: center;
-          }
-          .table .btn-icon {
-            padding: 0.25rem;
-            margin: 0 0.125rem;
-          }
-        }
-        @media (max-width: 480px) {
-          .table {
-            font-size: 0.75rem;
-          }
-          .table th, .table td {
-            padding: 0.4rem 0.2rem;
-          }
-          .table th:nth-child(1), .table td:nth-child(1) {
-            max-width: 80px;
-          }
-          .table th:nth-child(2), .table td:nth-child(2) {
-            max-width: 100px;
-          }
-          .table th:nth-child(3), .table td:nth-child(3) {
-            max-width: 80px;
-          }
-          .table .btn-icon {
-            padding: 0.2rem;
-            margin: 0 0.1rem;
-          }
-          .table .btn-icon svg {
-            width: 14px;
-            height: 14px;
-          }
         }
       `}</style>
       <div style={styles.header}>
         <h1 style={styles.title}>Campaigns</h1>
         <div className={`toolbar ${stylesModule.toolbar}`} style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
+          <EnhancedSearchInput 
+            value={search} 
+            onChange={setSearch} 
+            placeholder="Search campaigns..." 
+            type="campaigns"
+            align="right"
+          />
           <button type="button" className={`btn btn-primary ${stylesModule.btn} ${stylesModule.btnPrimary}`} onClick={() => setShowNewModal(true)}><Plus size={18} /> New campaign</button>
           <select 
             value={status} 
@@ -290,6 +271,71 @@ export default function CompanyCampaigns() {
           </select>
         </div>
       </div>
+
+      {loading && !campaigns.data?.length ? (
+        <div className={stylesModule.pageLoading}>Loading campaigns...</div>
+      ) : (
+        <>
+          <table className={`table ${stylesModule.table}`} style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.tableHeader}>Name</th>
+                <th style={styles.tableHeader}>Subject</th>
+                {!isMobile && <th style={styles.tableHeader}>Recipients</th>}
+                {!isMobile && <th style={styles.tableHeader}>Status</th>}
+                {!isMobile && <th style={styles.tableHeader}>Sent / Failed</th>}
+                {!isMobile && <th style={styles.tableHeader}>Date</th>}
+                <th style={styles.tableHeader}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {campaigns.data?.length > 0 ? (
+                campaigns.data.map((c) => (
+                  <tr key={c.id}>
+                    <td style={styles.tableCell}><Link to={`/campaigns/${c.id}`} style={styles.link}>{c.name}</Link></td>
+                    <td style={styles.tableCell}>{c.subject}</td>
+                    {!isMobile && <td style={styles.tableCell}>{c.total_recipients}</td>}
+                    {!isMobile && (
+                      <td style={styles.tableCell}>
+                        <span style={{ ...styles.badge, ...styles.getStatusStyle(c.status) }}>
+                          {c.status}
+                        </span>
+                      </td>
+                    )}
+                    {!isMobile && <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>}
+                    {!isMobile && <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>}
+                    <td style={styles.tableCell}>
+                      {isMobile && (
+                        <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(c)} title="View" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={16} /></button>
+                      )}
+                      {!isMobile && (
+                        <>
+                          <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569', marginRight: '0.25rem' }}><Pencil size={16} /></button>
+                          {c.status === 'draft' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a', marginRight: '0.25rem' }}><SendIcon size={16} /></button>}
+                          {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a', marginRight: '0.25rem' }}><RotateCw size={16} /></button>}
+                          <Link to={`/campaigns/${c.id}/logs`} className={`btn-icon ${stylesModule.btnIcon}`} title="Logs" style={{ color: '#475569', marginRight: '0.25rem' }}><FileText size={16} /></Link>
+                          {c.status !== 'sending' && <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={isMobile ? "3" : "7"} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>No campaigns found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {campaigns.meta?.last_page > 1 && (
+            <div className={`pagination ${stylesModule.pagination}`}>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
+              <span>Page {page} of {campaigns.meta.last_page}</span>
+              <button type="button" disabled={page >= campaigns.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>
+            </div>
+          )}
+        </>
+      )}
 
       {viewing && (
         <div className="modal-backdrop" onClick={closeView} style={styles.modalBackdrop}>
@@ -345,59 +391,6 @@ export default function CompanyCampaigns() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      <table className={`table ${stylesModule.table}`} style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.tableHeader}>Name</th>
-            <th style={styles.tableHeader}>Subject</th>
-            {!isMobile && <th style={styles.tableHeader}>Recipients</th>}
-            {!isMobile && <th style={styles.tableHeader}>Status</th>}
-            {!isMobile && <th style={styles.tableHeader}>Sent / Failed</th>}
-            {!isMobile && <th style={styles.tableHeader}>Date</th>}
-            <th style={styles.tableHeader}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {campaigns.data?.map((c) => (
-            <tr key={c.id}>
-              <td style={styles.tableCell}><Link to={`/campaigns/${c.id}`} style={styles.link}>{c.name}</Link></td>
-              <td style={styles.tableCell}>{c.subject}</td>
-              {!isMobile && <td style={styles.tableCell}>{c.total_recipients}</td>}
-              {!isMobile && (
-                <td style={styles.tableCell}>
-                  <span style={{ ...styles.badge, ...styles.getStatusStyle(c.status) }}>
-                    {c.status}
-                  </span>
-                </td>
-              )}
-              {!isMobile && <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>}
-              {!isMobile && <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>}
-              <td style={styles.tableCell}>
-                {isMobile && (
-                  <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(c)} title="View" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={16} /></button>
-                )}
-                {!isMobile && (
-                  <>
-                    <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569', marginRight: '0.25rem' }}><Pencil size={16} /></button>
-                    {c.status === 'draft' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a', marginRight: '0.25rem' }}><SendIcon size={16} /></button>}
-                    {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a', marginRight: '0.25rem' }}><RotateCw size={16} /></button>}
-                    <Link to={`/campaigns/${c.id}/logs`} className={`btn-icon ${stylesModule.btnIcon}`} title="Logs" style={{ color: '#475569', marginRight: '0.25rem' }}><FileText size={16} /></Link>
-                    {c.status !== 'sending' && <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
-                  </>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {campaigns.meta?.last_page > 1 && (
-        <div className={`pagination ${stylesModule.pagination}`}>
-          <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
-          <span>Page {page} of {campaigns.meta.last_page}</span>
-          <button type="button" disabled={page >= campaigns.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>
         </div>
       )}
 

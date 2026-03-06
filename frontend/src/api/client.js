@@ -36,6 +36,7 @@ export const auth = {
   register: (data) => api.post('/register', data),
   logout: () => api.post('/logout'),
   user: () => api.get('/user'),
+  search: (q) => api.get('/search', { params: { q } }),
   forgotPassword: (email) => api.post('/forgot-password', { email }),
   resetPassword: (data) => api.post('/reset-password', data),
 };
