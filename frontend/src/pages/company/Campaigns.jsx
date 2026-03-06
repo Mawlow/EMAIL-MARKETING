@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Plus, Send as SendIcon, FileText, Pencil, Trash2, RotateCw, ChevronLeft, ChevronRight, X } from 'lucide-react';
+import { Plus, Send as SendIcon, FileText, Pencil, Trash2, RotateCw, ChevronLeft, ChevronRight, X, Eye } from 'lucide-react';
 import { company } from '../../api/client';
 import CampaignForm from './CampaignForm';
 import ErrorBoundary from '../../components/ErrorBoundary';
@@ -13,7 +13,8 @@ const styles = {
     border: '1px solid #e2e8f0',
     boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
     padding: '1.75rem',
-    borderRadius: '12px'
+    borderRadius: '12px',
+    minHeight: '85vh'
   },
   header: {
     display: 'flex',
@@ -126,6 +127,8 @@ export default function CompanyCampaigns() {
   const [showNewModal, setShowNewModal] = useState(false);
   const [editCampaignId, setEditCampaignId] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [viewing, setViewing] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const load = () => {
     const params = { page };
@@ -136,6 +139,17 @@ export default function CompanyCampaigns() {
   useEffect(() => {
     load();
   }, [page, status]);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleSend = (id) => {
     if (!confirm('Start sending this campaign?')) return;
@@ -166,10 +180,99 @@ export default function CompanyCampaigns() {
     setEditCampaignId(id);
   };
 
+  const openView = (c) => {
+    setViewing(c);
+  };
+
+  const closeView = () => {
+    setViewing(null);
+  };
+
   if (loading) return <div className="page-loading">Loading...</div>;
 
   return (
     <div className={`page ${stylesModule.page}`} style={styles.page}>
+      <style>{`
+        .page {
+          margin-top: 1rem;
+        }
+        .modal-body {
+          max-height: 70vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .action-btn-edit:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        .action-btn-delete:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        .action-btn-view:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        @media (max-width: 768px) {
+          .table-container {
+            overflow-x: visible;
+            -webkit-overflow-scrolling: auto;
+          }
+          .table {
+            min-width: 100% !important;
+            width: 100% !important;
+            font-size: 0.875rem;
+          }
+          .table th, .table td {
+            padding: 0.5rem 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .table th:nth-child(1), .table td:nth-child(1) {
+            max-width: 120px;
+          }
+          .table th:nth-child(2), .table td:nth-child(2) {
+            max-width: 150px;
+          }
+          .table th:nth-child(3), .table td:nth-child(3) {
+            max-width: 120px;
+            text-align: center;
+          }
+          .table .btn-icon {
+            padding: 0.25rem;
+            margin: 0 0.125rem;
+          }
+        }
+        @media (max-width: 480px) {
+          .table {
+            font-size: 0.75rem;
+          }
+          .table th, .table td {
+            padding: 0.4rem 0.2rem;
+          }
+          .table th:nth-child(1), .table td:nth-child(1) {
+            max-width: 80px;
+          }
+          .table th:nth-child(2), .table td:nth-child(2) {
+            max-width: 100px;
+          }
+          .table th:nth-child(3), .table td:nth-child(3) {
+            max-width: 80px;
+          }
+          .table .btn-icon {
+            padding: 0.2rem;
+            margin: 0 0.1rem;
+          }
+          .table .btn-icon svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      `}</style>
       <div style={styles.header}>
         <h1 style={styles.title}>Campaigns</h1>
         <div className={`toolbar ${stylesModule.toolbar}`} style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
@@ -187,15 +290,73 @@ export default function CompanyCampaigns() {
           </select>
         </div>
       </div>
+
+      {viewing && (
+        <div className="modal-backdrop" onClick={closeView} style={styles.modalBackdrop}>
+          <div className="modal-dialog modal-dialog--medium" onClick={(e) => e.stopPropagation()} style={styles.modalDialog}>
+            <div className="modal-header" style={styles.modalHeader}>
+              <h3 style={{ margin: 0, color: '#000' }}>Campaign Details</h3>
+              <button type="button" className="modal-close" onClick={closeView} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
+            </div>
+            <div className="modal-body" style={styles.modalBody}>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Name:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.name}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Subject:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.subject}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Recipients:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.total_recipients}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Status:</strong>
+                  <p style={{ margin: '0.25rem 0' }}>
+                    <span style={{ ...styles.badge, ...styles.getStatusStyle(viewing.status) }}>
+                      {viewing.status}
+                    </span>
+                  </p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Sent / Failed:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.sent_count} / {viewing.failed_count}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Date:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{new Date(viewing.created_at).toLocaleDateString()}</p>
+                </div>
+              </div>
+              <div style={styles.modalActions}>
+                <button type="button" onClick={closeView} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#000', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Close</button>
+                <button type="button" onClick={() => { handleEdit(viewing.id); closeView(); }} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Edit</button>
+                {viewing.status === 'draft' && (
+                  <button type="button" onClick={() => { handleSend(viewing.id); closeView(); }} style={{ background: '#10b981', border: '1px solid #10b981', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Send</button>
+                )}
+                {(viewing.status === 'completed' || viewing.status === 'cancelled') && (
+                  <button type="button" onClick={() => { handleResend(viewing.id); closeView(); }} style={{ background: '#f59e0b', border: '1px solid #f59e0b', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Resend</button>
+                )}
+                <Link to={`/campaigns/${viewing.id}/logs`} onClick={closeView} style={{ background: '#6b7280', border: '1px solid #6b7280', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', textDecoration: 'none', marginRight: '0.5rem' }}>Logs</Link>
+                {viewing.status !== 'sending' && (
+                  <button type="button" onClick={() => { handleDelete(viewing); closeView(); }} style={{ background: '#dc2626', border: '1px solid #dc2626', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}>Delete</button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <table className={`table ${stylesModule.table}`} style={styles.table}>
         <thead>
           <tr>
             <th style={styles.tableHeader}>Name</th>
             <th style={styles.tableHeader}>Subject</th>
-            <th style={styles.tableHeader}>Recipients</th>
-            <th style={styles.tableHeader}>Status</th>
-            <th style={styles.tableHeader}>Sent / Failed</th>
-            <th style={styles.tableHeader}>Date</th>
+            {!isMobile && <th style={styles.tableHeader}>Recipients</th>}
+            {!isMobile && <th style={styles.tableHeader}>Status</th>}
+            {!isMobile && <th style={styles.tableHeader}>Sent / Failed</th>}
+            {!isMobile && <th style={styles.tableHeader}>Date</th>}
             <th style={styles.tableHeader}>Actions</th>
           </tr>
         </thead>
@@ -204,20 +365,29 @@ export default function CompanyCampaigns() {
             <tr key={c.id}>
               <td style={styles.tableCell}><Link to={`/campaigns/${c.id}`} style={styles.link}>{c.name}</Link></td>
               <td style={styles.tableCell}>{c.subject}</td>
-              <td style={styles.tableCell}>{c.total_recipients}</td>
+              {!isMobile && <td style={styles.tableCell}>{c.total_recipients}</td>}
+              {!isMobile && (
+                <td style={styles.tableCell}>
+                  <span style={{ ...styles.badge, ...styles.getStatusStyle(c.status) }}>
+                    {c.status}
+                  </span>
+                </td>
+              )}
+              {!isMobile && <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>}
+              {!isMobile && <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>}
               <td style={styles.tableCell}>
-                <span style={{ ...styles.badge, ...styles.getStatusStyle(c.status) }}>
-                  {c.status}
-                </span>
-              </td>
-              <td style={styles.tableCell}>{c.sent_count} / {c.failed_count}</td>
-              <td style={styles.tableCell}>{new Date(c.created_at).toLocaleDateString()}</td>
-              <td style={styles.tableCell}>
-                <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569' }}><Pencil size={16} /></button>
-                {c.status === 'draft' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a' }}><SendIcon size={16} /></button>}
-                {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a' }}><RotateCw size={16} /></button>}
-                <Link to={`/campaigns/${c.id}/logs`} className={`btn-icon ${stylesModule.btnIcon}`} title="Logs" style={{ color: '#475569' }}><FileText size={16} /></Link>
-                {c.status !== 'sending' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
+                {isMobile && (
+                  <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(c)} title="View" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={16} /></button>
+                )}
+                {!isMobile && (
+                  <>
+                    <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => handleEdit(c.id)} title="Edit" style={{ color: '#475569', marginRight: '0.25rem' }}><Pencil size={16} /></button>
+                    {c.status === 'draft' && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleSend(c.id)} title="Send" style={{ color: '#0f172a', marginRight: '0.25rem' }}><SendIcon size={16} /></button>}
+                    {(c.status === 'completed' || c.status === 'cancelled') && <button type="button" className={`btn-icon ${stylesModule.btnIcon}`} onClick={() => handleResend(c.id)} title="Resend" style={{ color: '#0f172a', marginRight: '0.25rem' }}><RotateCw size={16} /></button>}
+                    <Link to={`/campaigns/${c.id}/logs`} className={`btn-icon ${stylesModule.btnIcon}`} title="Logs" style={{ color: '#475569', marginRight: '0.25rem' }}><FileText size={16} /></Link>
+                    {c.status !== 'sending' && <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(c)} title="Delete" style={{ color: '#475569' }}><Trash2 size={16} /></button>}
+                  </>
+                )}
               </td>
             </tr>
           ))}
