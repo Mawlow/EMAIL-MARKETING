@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { UserPlus, Upload, Search, X, Pencil, Trash2, ChevronLeft, ChevronRight, Filter, Eye } from 'lucide-react';
 import { company } from '../../api/client';
 import stylesModule from './Contacts.module.css';
+import EnhancedSearchInput from '../../components/EnhancedSearchInput';
 
 const emptyForm = {
   email: '',
@@ -154,6 +155,7 @@ export default function Contacts() {
   const fileRef = useRef(null);
 
   const load = () => {
+    setLoading(true);
     company.contacts.list({ 
       page, 
       search: debouncedSearch || undefined,
@@ -288,8 +290,6 @@ export default function Contacts() {
     e.target.value = '';
   };
 
-  if (loading && !contacts.data) return <div className={`page-loading ${stylesModule.pageLoading}`}>Loading...</div>;
-
   return (
     <div className={`page ${stylesModule.page}`} style={styles.page}>
       <style>{`
@@ -332,61 +332,18 @@ export default function Contacts() {
             overflow: hidden;
             text-overflow: ellipsis;
           }
-          .table th:nth-child(1), .table td:nth-child(1) {
-            max-width: 120px;
-          }
-          .table th:nth-child(2), .table td:nth-child(2) {
-            max-width: 150px;
-          }
-          .table th:nth-child(3), .table td:nth-child(3) {
-            max-width: 120px;
-            text-align: center;
-          }
-          .table .btn-icon {
-            padding: 0.25rem;
-            margin: 0 0.125rem;
-          }
-        }
-        @media (max-width: 480px) {
-          .table {
-            font-size: 0.75rem;
-          }
-          .table th, .table td {
-            padding: 0.4rem 0.2rem;
-          }
-          .table th:nth-child(1), .table td:nth-child(1) {
-            max-width: 80px;
-          }
-          .table th:nth-child(2), .table td:nth-child(2) {
-            max-width: 100px;
-          }
-          .table th:nth-child(3), .table td:nth-child(3) {
-            max-width: 80px;
-          }
-          .table .btn-icon {
-            padding: 0.2rem;
-            margin: 0 0.1rem;
-          }
-          .table .btn-icon svg {
-            width: 14px;
-            height: 14px;
-          }
         }
       `}</style>
       <div style={styles.header}>
         <h1 style={styles.title}>Contacts</h1>
         <div className={`toolbar ${stylesModule.toolbar}`} style={{ ...styles.toolbar, justifyContent: 'flex-end' }}>
-          <div className={stylesModule.searchWrap}>
-            <Search size={18} />
-            <input 
-              type="search" 
-              placeholder="Search..." 
-              value={search} 
-              onChange={(e) => setSearch(e.target.value)} 
-              className={stylesModule.searchInput}
-              style={styles.searchInput}
-            />
-          </div>
+          <EnhancedSearchInput 
+            value={search} 
+            onChange={setSearch} 
+            placeholder="Search contacts..." 
+            type="contacts"
+            align="right"
+          />
           <button type="button" className={`btn btn-primary ${stylesModule.btn} ${stylesModule.btnPrimary}`} onClick={openAdd}><UserPlus size={18} /> Add contact</button>
           <input type="file" ref={fileRef} accept=".csv" style={{ display: 'none' }} onChange={handleImport} />
           <button 
@@ -408,6 +365,79 @@ export default function Contacts() {
             <X size={14} strokeWidth={3} />
           </div>
         </div>
+      )}
+
+      {loading && !contacts.data?.length ? (
+        <div className={stylesModule.pageLoading}>Loading contacts...</div>
+      ) : (
+        <>
+          <table className={`table ${stylesModule.table}`} style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.tableHeader}>Email</th>
+                <th style={styles.tableHeader}>Company Name</th>
+                {!isMobile && <th style={styles.tableHeader}>Phone</th>}
+                {!isMobile && <th style={styles.tableHeader}>Groups</th>}
+                {!isMobile && <th style={styles.tableHeader}>Marketing</th>}
+                <th style={styles.tableHeader}>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {contacts.data?.length > 0 ? (
+                contacts.data.map((c) => (
+                  <tr key={c.id}>
+                    <td style={styles.tableCell}>{c.email}</td>
+                    <td style={styles.tableCell}>{c.company_name || '—'}</td>
+                    {!isMobile && <td style={styles.tableCell}>{c.phone || '—'}</td>}
+                    {!isMobile && <td style={styles.tableCell}>{(c.groups || []).map((g) => g.name).join(', ') || '—'}</td>}
+                    {!isMobile && (
+                      <td style={styles.tableCell}>
+                        <span 
+                          style={{
+                            display: 'inline-flex',
+                            padding: '0.25rem 0.75rem',
+                            borderRadius: '6px',
+                            border: `1px solid ${c.is_marketing ? '#10b981' : '#e2e8f0'}`,
+                            background: c.is_marketing ? '#10b981' : '#fff',
+                            color: c.is_marketing ? '#fff' : '#64748b',
+                            fontSize: '0.875rem',
+                            fontWeight: '500'
+                          }}
+                        >
+                          {c.is_marketing ? 'Yes' : 'No'}
+                        </span>
+                      </td>
+                    )}
+                    <td style={styles.tableCell}>
+                      {isMobile && (
+                        <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(c)} title="View" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={16} /></button>
+                      )}
+                      {!isMobile && (
+                        <>
+                          <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => openEdit(c)} title="Edit" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={16} /></button>
+                          <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Trash2 size={16} /></button>
+                        </>
+                      )}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={isMobile ? "3" : "6"} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+                    No contacts found. Click "Add contact" to create your first contact.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          {contacts.meta?.last_page > 1 && (
+            <div className={`pagination ${stylesModule.pagination}`}>
+              <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
+              <span>Page {page} of {contacts.meta.last_page}</span>
+              <button type="button" disabled={page >= contacts.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>
+            </div>
+          )}
+        </>
       )}
 
       {showAddForm && (
@@ -569,73 +599,6 @@ export default function Contacts() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      <table className={`table ${stylesModule.table}`} style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.tableHeader}>Email</th>
-            <th style={styles.tableHeader}>Company Name</th>
-            {!isMobile && <th style={styles.tableHeader}>Phone</th>}
-            {!isMobile && <th style={styles.tableHeader}>Groups</th>}
-            {!isMobile && <th style={styles.tableHeader}>Marketing</th>}
-            <th style={styles.tableHeader}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {contacts.data?.length > 0 ? (
-            contacts.data?.map((c) => (
-              <tr key={c.id}>
-                <td style={styles.tableCell}>{c.email}</td>
-                <td style={styles.tableCell}>{c.company_name || '—'}</td>
-                {!isMobile && <td style={styles.tableCell}>{c.phone || '—'}</td>}
-                {!isMobile && <td style={styles.tableCell}>{(c.groups || []).map((g) => g.name).join(', ') || '—'}</td>}
-                {!isMobile && (
-                  <td style={styles.tableCell}>
-                    <span 
-                      style={{
-                        display: 'inline-flex',
-                        padding: '0.25rem 0.75rem',
-                        borderRadius: '6px',
-                        border: `1px solid ${c.is_marketing ? '#10b981' : '#e2e8f0'}`,
-                        background: c.is_marketing ? '#10b981' : '#fff',
-                        color: c.is_marketing ? '#fff' : '#64748b',
-                        fontSize: '0.875rem',
-                        fontWeight: '500'
-                      }}
-                    >
-                      {c.is_marketing ? 'Yes' : 'No'}
-                    </span>
-                  </td>
-                )}
-                <td style={styles.tableCell}>
-                  {isMobile && (
-                    <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(c)} title="View" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Eye size={16} /></button>
-                  )}
-                  {!isMobile && (
-                    <>
-                      <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => openEdit(c)} title="Edit" style={{ marginRight: '0.5rem', padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Pencil size={16} /></button>
-                      <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(c)} title="Delete" style={{ padding: '0.35rem', borderRadius: '6px', border: '1px solid #e2e8f0', background: '#fff', cursor: 'pointer', color: '#64748b' }}><Trash2 size={16} /></button>
-                    </>
-                  )}
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={isMobile ? "3" : "6"} style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-                No contacts found. Click "Add contact" to create your first contact.
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      {contacts.meta?.last_page > 1 && (
-        <div className={`pagination ${stylesModule.pagination}`}>
-          <button type="button" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}><ChevronLeft size={16} /> Previous</button>
-          <span>Page {page} of {contacts.meta.last_page}</span>
-          <button type="button" disabled={page >= contacts.meta.last_page} onClick={() => setPage((p) => p + 1)}>Next <ChevronRight size={16} /></button>
         </div>
       )}
     </div>

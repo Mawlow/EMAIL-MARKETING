@@ -16,6 +16,7 @@ Route::post('/reset-password', [App\Http\Controllers\Api\AuthController::class, 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
     Route::get('/user', [App\Http\Controllers\Api\AuthController::class, 'user']);
+    Route::get('/search', [App\Http\Controllers\Api\SearchController::class, 'search']);
 
     // Admin-only routes
     Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {

@@ -22,6 +22,7 @@ export default function Layout() {
       <button type="button" className="sidebar-toggle" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
         <Menu size={24} />
       </button>
+      
       <div className={`sidebar-overlay ${sidebarOpen ? 'sidebar-overlay--open' : ''}`} onClick={() => setSidebarOpen(false)} aria-hidden />
       <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-brand">

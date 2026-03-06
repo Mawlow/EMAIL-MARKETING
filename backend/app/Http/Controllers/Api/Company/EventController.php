@@ -20,6 +20,14 @@ class EventController extends Controller
                 ->where('start_at', '<=', $request->end);
         }
 
+        if ($request->filled('search')) {
+            $s = $request->search;
+            $query->where(function($q) use ($s) {
+                $q->where('title', 'like', "%{$s}%")
+                  ->orWhere('description', 'like', "%{$s}%");
+            });
+        }
+
         $events = $query->get();
         return response()->json($events->toArray());
     }
