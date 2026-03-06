@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, Pencil, Trash2, X } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Eye } from 'lucide-react';
 import { company } from '../../api/client';
 import stylesModule from './Senders.module.css';
 
@@ -22,7 +22,8 @@ const styles = {
     border: '1px solid #e2e8f0',
     boxShadow: '0 4px 24px rgba(0, 0, 0, 0.08)',
     padding: '1.75rem',
-    borderRadius: '12px'
+    borderRadius: '12px',
+    minHeight: '85vh'
   },
   header: {
     display: 'flex',
@@ -33,7 +34,8 @@ const styles = {
   title: {
     margin: 0,
     color: '#000',
-    fontWeight: 700
+    fontWeight: 700,
+    fontSize: '2rem'
   },
   toolbar: {
     display: 'flex',
@@ -159,6 +161,8 @@ export default function Senders() {
   const [editing, setEditing] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
+  const [viewing, setViewing] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
 
   const load = () => {
     company.senderAccounts.list().then(({ data }) => {
@@ -169,6 +173,17 @@ export default function Senders() {
 
   useEffect(() => {
     load();
+  }, []);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const handleSubmit = async (e) => {
@@ -246,10 +261,105 @@ export default function Senders() {
     setForm(defaultForm);
   };
 
-  if (loading) return <div className={`page-loading ${stylesModule.pageLoading}`}>Loading...</div>;
+  const openView = (s) => {
+    setViewing(s);
+  };
+
+  const closeView = () => {
+    setViewing(null);
+  };
+
+  if (loading) return <div className="page-loading">Loading...</div>;
 
   return (
     <div className={`page ${stylesModule.page}`} style={styles.page}>
+      <style>{`
+        .page {
+          margin-top: 1rem;
+        }
+        .modal-body {
+          max-height: 70vh;
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .action-btn-edit:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        .action-btn-delete:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        .action-btn-view:hover {
+          background-color: #f1f5f9 !important;
+          border-color: #94a3b8 !important;
+          color: #0f172a !important;
+        }
+        .modal-body .form input,
+        .modal-body .form select {
+          width: 100% !important;
+          max-width: 100% !important;
+          box-sizing: border-box !important;
+        }
+        @media (max-width: 768px) {
+          .table-container {
+            overflow-x: visible;
+            -webkit-overflow-scrolling: auto;
+          }
+          .table {
+            min-width: 100% !important;
+            width: 100% !important;
+            font-size: 0.875rem;
+          }
+          .table th, .table td {
+            padding: 0.5rem 0.25rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+          .table th:nth-child(1), .table td:nth-child(1) {
+            max-width: 120px;
+          }
+          .table th:nth-child(2), .table td:nth-child(2) {
+            max-width: 150px;
+          }
+          .table th:nth-child(3), .table td:nth-child(3) {
+            max-width: 120px;
+            text-align: center;
+          }
+          .table .btn-icon {
+            padding: 0.25rem;
+            margin: 0 0.125rem;
+          }
+        }
+        @media (max-width: 480px) {
+          .table {
+            font-size: 0.75rem;
+          }
+          .table th, .table td {
+            padding: 0.4rem 0.2rem;
+          }
+          .table th:nth-child(1), .table td:nth-child(1) {
+            max-width: 80px;
+          }
+          .table th:nth-child(2), .table td:nth-child(2) {
+            max-width: 100px;
+          }
+          .table th:nth-child(3), .table td:nth-child(3) {
+            max-width: 80px;
+          }
+          .table .btn-icon {
+            padding: 0.2rem;
+            margin: 0 0.1rem;
+          }
+          .table .btn-icon svg {
+            width: 14px;
+            height: 14px;
+          }
+        }
+      `}</style>
       <div style={styles.header}>
         <h1 style={styles.title}>Senders</h1>
         <div className={`toolbar ${stylesModule.toolbar}`} style={styles.toolbar}>
@@ -310,35 +420,98 @@ export default function Senders() {
         </div>
       )}
 
-      <table className={`table ${stylesModule.table}`} style={styles.table}>
-        <thead>
-          <tr>
-            <th style={styles.tableHeader}>Name</th>
-            <th style={styles.tableHeader}>Email</th>
-            <th style={styles.tableHeader}>Host</th>
-            <th style={styles.tableHeader}>Status</th>
-            <th style={styles.tableHeader}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {senders.map((s) => (
-            <tr key={s.id}>
-              <td style={styles.tableCell}>{s.name}</td>
-              <td style={styles.tableCell}>{s.from_email || '—'}</td>
-              <td style={styles.tableCell}>{s.host ? `${s.host}:${s.port ?? 587}` : '—'}</td>
-              <td style={styles.tableCell}>
-                <span className={`${stylesModule.badge} ${s.is_active ? stylesModule.badgeActive : stylesModule.badgeInactive}`} style={styles.getStatusStyle(s.is_active)}>
-                  {s.is_active ? 'Active' : 'Inactive'}
-                </span>
-              </td>
-              <td style={styles.tableCell}>
-                <button type="button" className={`btn-icon action-btn-edit ${stylesModule.btnIcon} ${stylesModule.actionBtn} action-btn-edit`} onClick={() => handleEdit(s)} title="Edit" style={{ ...styles.actionBtn, color: '#475569' }}><Pencil size={16} /></button>
-                <button type="button" className={`btn-icon action-btn-delete ${stylesModule.btnIcon} ${stylesModule.actionBtn} action-btn-delete`} onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#475569' }}><Trash2 size={16} /></button>
-              </td>
+      {viewing && (
+        <div className="modal-backdrop" onClick={closeView} style={styles.modalBackdrop}>
+          <div className="modal-dialog modal-dialog--medium" onClick={(e) => e.stopPropagation()} style={styles.modalDialog}>
+            <div className="modal-header" style={styles.modalHeader}>
+              <h3 style={{ margin: 0, color: '#000' }}>Sender Details</h3>
+              <button type="button" className="modal-close" onClick={closeView} aria-label="Close" style={{ color: '#0f172a' }}><X /></button>
+            </div>
+            <div className="modal-body" style={styles.modalBody}>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Name:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.name}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Email:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.from_email || '—'}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>From Name:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.from_name || '—'}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Host:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.host ? `${viewing.host}:${viewing.port ?? 587}` : '—'}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Encryption:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.encryption || 'None'}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Username:</strong>
+                  <p style={{ margin: '0.25rem 0', color: '#000' }}>{viewing.username || '—'}</p>
+                </div>
+                <div>
+                  <strong style={{ color: '#334155', fontSize: '0.875rem' }}>Status:</strong>
+                  <p style={{ margin: '0.25rem 0' }}>
+                    <span style={{ ...styles.badge, ...styles.getStatusStyle(viewing.is_active) }}>
+                      {viewing.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <div style={styles.modalActions}>
+                <button type="button" onClick={closeView} style={{ background: '#f1f5f9', border: '1px solid #e2e8f0', color: '#000', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Close</button>
+                <button type="button" onClick={() => { handleEdit(viewing); closeView(); }} style={{ background: '#2b52a5', border: '1px solid #2b52a5', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer', marginRight: '0.5rem' }}>Edit</button>
+                <button type="button" onClick={() => { handleDelete(viewing); closeView(); }} style={{ background: '#dc2626', border: '1px solid #dc2626', color: '#fff', padding: '0.5rem 1rem', borderRadius: '8px', cursor: 'pointer' }}>Delete</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="table-container">
+        <table className={`table ${stylesModule.table}`} style={styles.table}>
+          <thead>
+            <tr>
+              <th style={styles.tableHeader}>Name</th>
+              <th style={styles.tableHeader}>Email</th>
+              {!isMobile && <th style={styles.tableHeader}>Host</th>}
+              {!isMobile && <th style={styles.tableHeader}>Status</th>}
+              <th style={styles.tableHeader}>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {senders.map((s) => (
+              <tr key={s.id}>
+                <td style={styles.tableCell}>{s.name}</td>
+                <td style={styles.tableCell}>{s.from_email || '—'}</td>
+                {!isMobile && <td style={styles.tableCell}>{s.host ? `${s.host}:${s.port ?? 587}` : '—'}</td>}
+                {!isMobile && (
+                  <td style={styles.tableCell}>
+                    <span style={{ ...styles.badge, ...styles.getStatusStyle(s.is_active) }}>
+                      {s.is_active ? 'Active' : 'Inactive'}
+                    </span>
+                  </td>
+                )}
+                <td style={styles.tableCell}>
+                  {isMobile && (
+                    <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-view`} onClick={() => openView(s)} title="View" style={{ ...styles.actionBtn, color: '#475569' }}><Eye size={16} /></button>
+                  )}
+                  {!isMobile && (
+                    <>
+                      <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-edit`} onClick={() => handleEdit(s)} title="Edit" style={{ ...styles.actionBtn, color: '#475569', marginRight: '0.25rem' }}><Pencil size={16} /></button>
+                      <button type="button" className={`btn-icon ${stylesModule.btnIcon} action-btn-delete`} onClick={() => handleDelete(s)} title="Delete" style={{ ...styles.actionBtn, color: '#475569' }}><Trash2 size={16} /></button>
+                    </>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
